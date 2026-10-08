@@ -24,6 +24,17 @@
             'status'               => ['label' => 'Status', 'type' => 'select', 'required' => true, 'span' => true,
                                        'options' => collect($statuses)->map(fn ($s) => $s[0])],
         ];
+
+        $endUserFields = [
+            'nama'     => 'Nama End User',
+            'industri' => 'Industri',
+            'contact'  => 'Contact Person',
+            'telepon'  => 'Telepon',
+            'email'    => 'Email',
+            'kota'     => 'Kota',
+            'npwp'     => 'NPWP',
+        ];
+
         $formatDate = fn ($date) => $date
             ? \Illuminate\Support\Carbon::parse($date)->translatedFormat('d M Y')
             : null;
@@ -90,6 +101,7 @@
                                 $rowData = [
                                     'id'         => $project->id,
                                     'update_url' => route('admin.projects.update', $project),
+                                    'end_user'   => $project->endUser ? $project->endUser->only(array_keys($endUserFields)) : null,
                                     'values'     => array_merge(
                                         $project->only(array_keys($fields)),
                                         ['deadline_date' => $deadline?->format('Y-m-d')]
@@ -101,7 +113,21 @@
                                 <td class="px-6 py-4 text-slate-500">
                                     {{ $isPaginated ? $projects->firstItem() + $loop->index : $loop->iteration }}
                                 </td>
-                                <td class="px-6 py-4 font-medium text-slate-900">{{ $project->endUser?->nama ?? '-' }}</td>
+                                <td class="px-6 py-4 font-medium text-slate-900">
+                                    @if ($project->endUser)
+                                        <button
+                                            type="button"
+                                            onclick="openEndUserDetail(this)"
+                                            aria-haspopup="dialog"
+                                            aria-controls="endUserDetailModal"
+                                            class="rounded text-left text-indigo-600 underline-offset-4 hover:text-indigo-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                                        >
+                                            {{ $project->endUser->nama }}
+                                        </button>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4 text-slate-700">{{ $project->project_name }}</td>
                                 <td class="px-6 py-4 text-slate-700">{{ $project->pic?->nama ?? '-' }}</td>
                                 <td class="whitespace-nowrap px-6 py-4 {{ $overdue ? 'font-semibold text-red-600' : 'text-slate-700' }}">
@@ -150,11 +176,19 @@
                         $rowData = [
                             'id'         => $project->id,
                             'update_url' => route('admin.projects.update', $project),
-                            'values'     => array_merge(
+
+                            'end_user' => $project->endUser
+                                ? $project->endUser->only(array_keys($endUserFields))
+                                : null,
+
+                            'values' => array_merge(
                                 $project->only(array_keys($fields)),
                                 ['deadline_date' => $deadline?->format('Y-m-d')]
                             ),
-                            'labels'     => collect($fields)->map(fn ($f, $name) => $formatValue($f, $project->$name)),
+
+                            'labels' => collect($fields)->map(
+                                fn ($f, $name) => $formatValue($f, $project->$name)
+                            ),
                         ];
                     @endphp
                     <div class="data-row rounded-lg border border-slate-200 bg-slate-50 p-4 transition hover:shadow-md" data-project="{{ json_encode($rowData) }}">
@@ -162,7 +196,22 @@
                         <div class="mb-4 flex items-start justify-between gap-3">
                             <div class="flex-1 min-w-0">
                                 <p class="truncate font-semibold text-slate-900">{{ $project->project_name }}</p>
-                                <p class="truncate text-sm text-slate-600">{{ $project->endUser?->nama ?? '-' }}</p>
+                                <div class="text-sm">
+                                    @if ($project->endUser)
+                                        <button
+                                            type="button"
+                                            onclick="openEndUserDetail(this)"
+                                            aria-haspopup="dialog"
+                                            aria-controls="endUserDetailModal"
+                                            class="block max-w-full truncate rounded text-left font-medium text-indigo-600 underline-offset-4 hover:text-indigo-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                                        >
+                                            {{ $project->endUser->nama }}
+                                        </button>
+                                    @else
+                                        <span class="text-slate-600">-</span>
+                                    @endif
+                                </div>
+
                             </div>
                             <span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-medium {{ $statusClass }}">
                                 {{ $statusLabel }}
@@ -348,6 +397,60 @@
         </div>
     </div>
 
+    {{-- ================= MODAL DETAIL END USER ================= --}}
+    <div
+        id="endUserDetailModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="endUserDetailTitle"
+        class="modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4"
+    >
+        <div class="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white shadow-xl">
+            <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+                <h3
+                    id="endUserDetailTitle"
+                    class="text-lg font-semibold text-slate-900"
+                >
+                    Detail End User
+                </h3>
+
+                <button
+                    type="button"
+                    onclick="closeModal('endUserDetailModal')"
+                    aria-label="Tutup detail end user"
+                    class="rounded text-2xl leading-none text-slate-400 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                >
+                    &times;
+                </button>
+            </div>
+
+            <dl class="grid grid-cols-1 gap-4 px-6 py-5 sm:grid-cols-2">
+                @foreach ($endUserFields as $name => $fieldLabel)
+                    <div class="{{ $name === 'nama' ? 'sm:col-span-2' : '' }}">
+                        <dt class="text-xs font-medium uppercase text-slate-500">
+                            {{ $fieldLabel }}
+                        </dt>
+
+                        <dd
+                            data-end-user-detail="{{ $name }}"
+                            class="mt-1 whitespace-pre-wrap break-words text-sm text-slate-900"
+                        >-</dd>
+                    </div>
+                @endforeach
+            </dl>
+
+            <div class="flex justify-end border-t border-slate-200 px-6 py-4">
+                <button
+                    type="button"
+                    onclick="closeModal('endUserDetailModal')"
+                    class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                >
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Format Rupiah
         function formatRupiah(value) {
@@ -511,5 +614,27 @@
         if (document.querySelector('.modal.flex')) {
             document.body.classList.add('overflow-hidden');
         }
+
+        function openEndUserDetail(btn) {
+            const { end_user } = rowData(btn);
+
+            if (!end_user) return;
+
+            const modal = document.getElementById('endUserDetailModal');
+
+            modal.querySelectorAll('[data-end-user-detail]').forEach((el) => {
+                const value = end_user[el.dataset.endUserDetail];
+
+                // Gunakan textContent supaya data ditampilkan sebagai teks,
+                // bukan diproses sebagai HTML.
+                el.textContent =
+                    value === null || value === undefined || value === ''
+                        ? '-'
+                        : String(value);
+            });
+
+            openModal('endUserDetailModal');
+        }
+
     </script>
 </x-admin-layout>
