@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
-
     protected $fillable = [
 
         'end_user_id',
@@ -20,6 +20,7 @@ class Project extends Model
         'percentage',
         'status',
         'deadline_date',
+        'submission_token',
     ];
 
     protected $casts = [
@@ -44,4 +45,15 @@ class Project extends Model
             'pic_id'
         );
     }
+
+    public function statusHistories(): HasMany
+    {
+        return $this->hasMany(ProjectStatusHistory::class)->latest();
+    }
+
+    public function activities(): HasMany
+    {
+        return $this->hasMany(ProjectActivity::class)->latest();
+    }
+
 }

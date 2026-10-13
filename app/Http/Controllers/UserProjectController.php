@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class UserProjectController extends Controller
@@ -18,7 +20,7 @@ class UserProjectController extends Controller
             'status' => ['nullable', Rule::in(['planning', 'progress', 'done', 'cancel'])],
         ]);
 
-        $projects = Project::with('endUser')
+        $projects = Project::with(['endUser:id,nama,industri,contact,telepon,email,kota', 'pic:id,nama', 'statusHistories', 'activities'])
             ->where('pic_id', $userId)
             ->when($filters['q'] ?? null, function ($query, string $search): void {
                 $query->where(function ($query) use ($search): void {
@@ -34,19 +36,20 @@ class UserProjectController extends Controller
         $stats = Project::where('pic_id', $userId)
             ->selectRaw("
                 COUNT(*) as total,
+                SUM(status = 'planning') as planning,
                 SUM(status = 'progress') as progress,
                 SUM(status = 'done') as done
             ")
             ->first();
 
         $totalProject = (int) $stats->total;
-        $progress = (int) $stats->progress;
+        $active = (int) $stats->planning + (int) $stats->progress;
         $done = (int) $stats->done;
 
         return view('user.projects.index', compact(
             'projects',
             'totalProject',
-            'progress',
+            'active',
             'done',
             'filters'
         ));
@@ -56,19 +59,38 @@ class UserProjectController extends Controller
     {
         abort_if((int) $project->pic_id !== (int) auth()->id(), 403);
 
-        abort_if(
-            in_array($project->status, ['done', 'cancel'], true),
-            403,
-            'Project yang sudah selesai atau dibatalkan tidak bisa diubah.'
-        );
+        abort_if(in_array($project->status, ['done', 'cancel'], true), 403,
+            'Project yang sudah selesai atau dibatalkan tidak bisa diubah.');
 
-        $request->validate([
-            'status' => 'required|in:planning,progress,done',
+        $validated = $request->validate([
+            'status' => ['required', Rule::in(['planning', 'progress', 'done'])],
         ]);
 
-        $project->update([
-            'status' => $request->status,
-        ]);
+        $allowedNextStatuses = [
+            'planning' => 'progress',
+            'progress' => 'done',
+        ];
+        if ($validated['status'] !== $project->status
+            && ($allowedNextStatuses[$project->status] ?? null) !== $validated['status']) {
+            throw ValidationException::withMessages([
+                'status' => 'Status project harus berjalan berurutan dari Planning ke Progress lalu Done.',
+            ]);
+        }
+
+        DB::transaction(function () use ($project, $validated): void {
+            $previousStatus = $project->status;
+            $project->update(['status' => $validated['status']]);
+
+            if ($previousStatus !== $project->status) {
+                $project->statusHistories()->create([
+                    'project_name' => $project->project_name,
+                    'actor_id' => auth()->id(),
+                    'actor_name' => auth()->user()->nama,
+                    'from_status' => $previousStatus,
+                    'to_status' => $project->status,
+                ]);
+            }
+        });
 
         return back()->with('success', 'Progress project berhasil diperbarui');
     }

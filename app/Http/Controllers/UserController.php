@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 class UserController extends Controller
 {
@@ -42,7 +44,6 @@ class UserController extends Controller
         $request->validateWithBag('edit', [
             'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$user->id,
-            'password' => 'nullable|min:8',
             'role' => 'required|in:admin,user',
             'is_active' => 'required|boolean',
         ]);
@@ -56,10 +57,6 @@ class UserController extends Controller
 
         $data = $request->only('nama', 'email', 'role', 'is_active');
 
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
-        }
-
         // Biar admin nggak nggak sengaja nonaktifin / nurunin role akunnya sendiri
         if ($user->is(auth()->user())) {
             $data['role'] = 'admin';
@@ -71,5 +68,24 @@ class UserController extends Controller
         return redirect()
             ->route('admin.users.index')
             ->with('success', 'User berhasil diperbarui');
+    }
+
+    public function sendPasswordResetLink(User $user): RedirectResponse
+    {
+        $status = Password::sendResetLink(['email' => $user->email]);
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return redirect()
+                ->route('admin.users.index')
+                ->with('success', "Link reset password dikirim ke {$user->email}.");
+        }
+
+        $message = $status === Password::RESET_THROTTLED
+            ? 'Link reset baru saja dikirim. Coba lagi beberapa saat.'
+            : 'Link reset password gagal dikirim. Coba lagi atau periksa konfigurasi email.';
+
+        return redirect()
+            ->route('admin.users.index')
+            ->with('error', $message);
     }
 }

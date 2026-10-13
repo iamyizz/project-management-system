@@ -18,6 +18,10 @@ liveFilterForms.forEach((form) => {
                 field.value = params.get(field.name) ?? '';
             }
         });
+
+        form.querySelectorAll('[data-flatpickr]').forEach((field) => {
+            field._flatpickr?.setDate(field.value || null, false);
+        });
     };
 
     const loadResults = async (url, syncForm = true) => {

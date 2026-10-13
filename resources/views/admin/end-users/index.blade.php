@@ -21,13 +21,14 @@
     $total = method_exists($endUsers, 'total') ? $endUsers->total() : $endUsers->count();
 @endphp
 
-<div class="space-y-6">
+<div class="space-y-7 sm:space-y-8">
 
     {{-- Header --}}
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-            <h2 class="text-2xl font-bold text-slate-900">End User Management</h2>
-            <p class="mt-1 text-sm text-slate-500">Total {{ $total }} customer terdaftar</p>
+            <p class="workspace-kicker">Relasi bisnis</p>
+            <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">End User Management</h2>
+            <p class="mt-2 text-sm text-slate-500">Simpan informasi customer dan contact person yang terhubung ke project.</p>
         </div>
 
         <button type="button" onclick="openModal('createModal')" class="{{ $btnPrimary }}">
@@ -50,14 +51,18 @@
     @endif
 
     {{-- Table Container --}}
-    <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
-        <div class="border-b border-slate-200 p-4">
-            <input type="text" id="search" placeholder="Cari customer..." class="{{ $input }}">
+        <div class="workspace-panel overflow-hidden">
+        <div class="flex flex-col gap-3 border-b border-slate-100 bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <div class="relative w-full sm:max-w-md">
+                <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m16.5 16.5 4 4"/></svg>
+                <input type="search" id="search" placeholder="Cari nama, industri, atau kota..." class="workspace-input pl-10">
+            </div>
+            <span class="text-xs font-medium text-slate-500">{{ $total }} customer terdaftar</span>
         </div>
 
         {{-- Desktop: Tabel --}}
         <div class="hidden overflow-x-auto md:block">
-            <table class="w-full text-left text-sm">
+            <table class="workspace-table w-full text-left text-sm">
                 <thead class="bg-slate-50 text-xs uppercase text-slate-500">
                     <tr>
                         <th class="px-6 py-3 font-semibold">Nama</th>

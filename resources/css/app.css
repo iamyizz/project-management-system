@@ -2,6 +2,181 @@
 @tailwind components;
 @tailwind utilities;
 
+@media print {
+    #sidebar,
+    #overlay,
+    header,
+    form[data-live-filter],
+    [data-filter-status] {
+        display: none !important;
+    }
+
+    .lg\:pl-64 {
+        padding-left: 0 !important;
+    }
+
+    main {
+        min-height: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+    }
+
+    #reportResults {
+        opacity: 1 !important;
+    }
+
+    .workspace-panel,
+    .workspace-stat {
+        box-shadow: none !important;
+        break-inside: avoid;
+    }
+}
+
+@layer base {
+    body {
+        @apply antialiased;
+    }
+
+    button,
+    a,
+    input,
+    select,
+    textarea {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    :focus-visible {
+        outline: 3px solid rgb(99 102 241 / 32%);
+        outline-offset: 2px;
+    }
+
+    table thead th {
+        @apply whitespace-nowrap border-b border-slate-200/80 bg-slate-50/90 text-[11px] font-bold uppercase tracking-wider text-slate-500;
+    }
+
+    table tbody tr {
+        @apply transition-colors duration-150;
+    }
+}
+
+@layer components {
+    .workspace-panel {
+        @apply rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/[0.03];
+    }
+
+    .workspace-stat {
+        @apply relative isolate overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm shadow-slate-900/[0.03] transition duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md sm:p-5;
+    }
+
+    .workspace-input {
+        @apply w-full rounded-xl border-slate-200 bg-white text-sm text-slate-800 shadow-sm placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10;
+    }
+
+    .workspace-kicker {
+        @apply text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-600;
+    }
+
+    .end-user-link {
+        @apply inline-flex max-w-full items-center gap-1.5 rounded-md px-1.5 py-1 text-left font-semibold text-indigo-700 transition-colors duration-150 hover:bg-indigo-50 hover:text-indigo-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500;
+        margin-left: -0.375rem;
+    }
+
+    .end-user-link__label {
+        @apply relative;
+    }
+
+    .end-user-link__label::after {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 1px;
+        content: '';
+        background: currentColor;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 150ms ease;
+    }
+
+    .end-user-link:hover .end-user-link__label::after,
+    .end-user-link:focus-visible .end-user-link__label::after {
+        transform: scaleX(1);
+    }
+
+    .end-user-link__icon {
+        @apply h-3.5 w-3.5 shrink-0 opacity-50 transition duration-150;
+    }
+
+    .end-user-link:hover .end-user-link__icon,
+    .end-user-link:focus-visible .end-user-link__icon {
+        opacity: 1;
+        transform: translateX(2px);
+    }
+
+    .workspace-table {
+        @apply min-w-full border-separate text-left;
+        border-spacing: 0 0.5rem;
+    }
+
+    .workspace-table thead th {
+        @apply sticky top-0 z-10 bg-slate-50 px-5 py-3.5 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500;
+        background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .workspace-table tbody td {
+        @apply px-5 py-4 align-middle text-sm;
+        background: #fff;
+        border-top: 1px solid #e9edf5;
+        border-bottom: 1px solid #e9edf5;
+        transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    .workspace-table thead th:first-child {
+        border-top-left-radius: 0.75rem;
+    }
+
+    .workspace-table thead th:last-child {
+        border-top-right-radius: 0.75rem;
+    }
+
+    .workspace-table tbody tr td:first-child {
+        border-left: 1px solid #e9edf5;
+        border-top-left-radius: 0.75rem;
+        border-bottom-left-radius: 0.75rem;
+    }
+
+    .workspace-table tbody tr td:last-child {
+        border-right: 1px solid #e9edf5;
+        border-top-right-radius: 0.75rem;
+        border-bottom-right-radius: 0.75rem;
+    }
+
+    .workspace-table tbody tr:nth-child(even) td {
+        background: #fbfcfe;
+    }
+
+    .workspace-table tbody tr:hover td,
+    .workspace-table tbody tr:focus-within td {
+        background: #f5f7ff;
+        border-color: #c7d2fe;
+    }
+
+    .workspace-table tbody tr:hover td:first-child,
+    .workspace-table tbody tr:focus-within td:first-child {
+        box-shadow: inset 3px 0 0 #6366f1;
+    }
+
+    .workspace-table tbody tr td[colspan] {
+        border-radius: 0.75rem;
+        text-align: center;
+    }
+
+    .workspace-table tbody tr:last-child td {
+        border-bottom-width: 1px;
+    }
+}
+
 @layer utilities {
     .scrollbar-hidden {
         -ms-overflow-style: none;

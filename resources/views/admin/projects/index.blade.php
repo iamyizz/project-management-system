@@ -50,16 +50,17 @@
         };
         $isPaginated = $projects instanceof \Illuminate\Pagination\AbstractPaginator;
     @endphp
-    <div class="space-y-6">
+    <div class="space-y-7 sm:space-y-8">
         {{-- HEADER --}}
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-                <h2 class="text-2xl font-bold text-slate-900">Project Management</h2>
-                <p class="mt-1 text-sm text-slate-500">Kelola seluruh project perusahaan</p>
+                <p class="workspace-kicker">Operasional</p>
+                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Project Management</h2>
+                <p class="mt-2 text-sm text-slate-500">Kelola project, PIC, nilai kontrak, dan target penyelesaian.</p>
             </div>
             <button type="button" onclick="openModal('createModal')"
-                class="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700">
-                + Tambah Project
+                class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500/20">
+                <span class="text-lg leading-none">+</span> Tambah project
             </button>
         </div>
         {{-- ALERT --}}
@@ -70,29 +71,32 @@
         @endif
 
         {{-- TABLE CONTAINER --}}
-        <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
-            <form method="GET" action="{{ route('admin.projects.index') }}" data-live-filter data-results-target="#projectResults" class="grid gap-3 border-b border-slate-200 p-4 sm:grid-cols-2 lg:grid-cols-5">
-                <input name="q" type="search" value="{{ $filters['q'] ?? '' }}" placeholder="Cari project, customer, PIC..." class="{{ $input }} lg:col-span-2">
-                <select name="status" class="{{ $input }}">
+        <div class="workspace-panel overflow-hidden">
+            <form method="GET" action="{{ route('admin.projects.index') }}" data-live-filter data-results-target="#projectResults" class="grid gap-3 border-b border-slate-100 bg-white p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-5">
+                <div class="relative lg:col-span-2">
+                    <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m16.5 16.5 4 4"/></svg>
+                    <input name="q" type="search" value="{{ $filters['q'] ?? '' }}" placeholder="Cari project, customer, PIC..." class="workspace-input pl-10">
+                </div>
+                <select name="status" class="workspace-input">
                     <option value="">Semua status</option>
                     @foreach ($statuses as $value => [$statusLabel])
                         <option value="{{ $value }}" @selected(($filters['status'] ?? '') === $value)>{{ $statusLabel }}</option>
                     @endforeach
                 </select>
-                <select name="pic_id" class="{{ $input }}">
+                <select name="pic_id" class="workspace-input">
                     <option value="">Semua PIC</option>
                     @foreach ($pics as $pic)
                         <option value="{{ $pic->id }}" @selected((string) ($filters['pic_id'] ?? '') === (string) $pic->id)>{{ $pic->nama }}</option>
                     @endforeach
                 </select>
-                <select name="end_user_id" class="{{ $input }}">
+                <select name="end_user_id" class="workspace-input">
                     <option value="">Semua End User</option>
                     @foreach ($endUsers as $endUser)
                         <option value="{{ $endUser->id }}" @selected((string) ($filters['end_user_id'] ?? '') === (string) $endUser->id)>{{ $endUser->nama }}</option>
                     @endforeach
                 </select>
                 <div class="flex gap-2 sm:col-span-2 lg:col-span-5">
-                    <a href="{{ route('admin.projects.index') }}" data-filter-reset class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Reset</a>
+                    <a href="{{ route('admin.projects.index') }}" data-filter-reset class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">Reset filter</a>
                 </div>
             </form>
             <p data-filter-status role="status" aria-live="polite" class="sr-only"></p>
@@ -100,7 +104,7 @@
 
             {{-- DESKTOP: Tabel --}}
             <div class="hidden overflow-x-auto md:block">
-                <table class="w-full text-left text-sm">
+                <table class="workspace-table w-full text-left text-sm">
                     <thead class="bg-slate-50 text-xs uppercase text-slate-500">
                         <tr>
                             <th class="px-6 py-3 font-semibold">No</th>
@@ -130,6 +134,19 @@
                                         ['deadline_date' => $deadline?->format('Y-m-d')]
                                     ),
                                     'labels'     => collect($fields)->map(fn ($f, $name) => $formatValue($f, $project->$name)),
+                                    'history'    => $project->statusHistories->map(fn ($history) => [
+                                        'from' => $history->from_status ? ($statuses[$history->from_status][0] ?? $history->from_status) : null,
+                                        'to' => $statuses[$history->to_status][0] ?? $history->to_status,
+                                        'actor' => $history->actor_name,
+                                        'date' => $history->created_at->translatedFormat('d M Y · H:i'),
+                                    ])->values(),
+                                    'activities' => $project->activities->map(fn ($activity) => [
+                                        'field' => $activity->field,
+                                        'old' => $activity->old_value,
+                                        'new' => $activity->new_value,
+                                        'actor' => $activity->actor_name,
+                                        'date' => $activity->created_at->translatedFormat('d M Y · H:i'),
+                                    ])->values(),
                                 ];
                             @endphp
                             <tr class="data-row transition hover:bg-slate-50" data-project="{{ json_encode($rowData) }}">
@@ -143,9 +160,10 @@
                                             onclick="openEndUserDetail(this)"
                                             aria-haspopup="dialog"
                                             aria-controls="endUserDetailModal"
-                                            class="rounded text-left text-indigo-600 underline-offset-4 hover:text-indigo-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                                            class="end-user-link group"
                                         >
-                                            {{ $project->endUser->nama }}
+                                            <span class="end-user-link__label">{{ $project->endUser->nama }}</span>
+                                            <svg class="end-user-link__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m7 4 6 6-6 6"/></svg>
                                         </button>
                                     @else
                                         -
@@ -226,9 +244,10 @@
                                             onclick="openEndUserDetail(this)"
                                             aria-haspopup="dialog"
                                             aria-controls="endUserDetailModal"
-                                            class="block max-w-full truncate rounded text-left font-medium text-indigo-600 underline-offset-4 hover:text-indigo-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                                            class="end-user-link group max-w-full"
                                         >
-                                            {{ $project->endUser->nama }}
+                                            <span class="end-user-link__label max-w-full truncate">{{ $project->endUser->nama }}</span>
+                                            <svg class="end-user-link__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m7 4 6 6-6 6"/></svg>
                                         </button>
                                     @else
                                         <span class="text-slate-600">-</span>
@@ -319,6 +338,9 @@
                         ? route('admin.projects.store')
                         : ($formType === 'edit' && old('edit_id') ? route('admin.projects.update', old('edit_id')) : '') }}">
                     @csrf
+                    @if ($mode === 'create')
+                        <input type="hidden" name="submission_token" value="{{ old('submission_token', (string) \Illuminate\Support\Str::uuid()) }}">
+                    @endif
                     @if ($mode === 'edit')
                         @method('PUT')
                         <input type="hidden" name="edit_id" value="{{ $formType === 'edit' ? old('edit_id') : '' }}">
@@ -387,7 +409,7 @@
                             class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
                             Batal
                         </button>
-                        <button type="submit"
+                        <button type="submit" data-form-submit
                             class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
                             Simpan
                         </button>
@@ -421,6 +443,14 @@
                     </div>
                 @endforeach
             </dl>
+            <section class="border-t border-slate-100 px-6 py-5 sm:px-8">
+                <h4 class="text-sm font-semibold text-slate-900">Riwayat Status</h4>
+                <ol data-status-history class="mt-3 space-y-3"></ol>
+            </section>
+            <section class="border-t border-slate-100 px-6 py-5 sm:px-8">
+                <h4 class="text-sm font-semibold text-slate-900">Perubahan Detail Project</h4>
+                <ol data-project-activities class="mt-3 space-y-3"></ol>
+            </section>
             <div class="flex justify-end border-t border-slate-100 px-6 py-4 sm:px-8">
                 <button type="button" onclick="closeModal('detailModal')"
                     class="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2">
@@ -533,6 +563,20 @@
             }
         });
 
+        const createForm = document.getElementById('createForm');
+        createForm?.addEventListener('submit', (event) => {
+            if (createForm.dataset.submitting === 'true') {
+                event.preventDefault();
+                return;
+            }
+
+            createForm.dataset.submitting = 'true';
+            const submitButton = createForm.querySelector('[data-form-submit]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Menyimpan...';
+            submitButton.classList.add('cursor-wait', 'opacity-70');
+        });
+
         // Setup auto-calculate listener untuk form
         document.querySelectorAll('form').forEach(form => {
             const projectValueInput = form.querySelector('[name="project_value"]');
@@ -569,11 +613,66 @@
         }
 
         function openDetail(btn) {
-            const { labels } = rowData(btn);
+            const data = rowData(btn);
+            const { labels } = data;
             document.querySelectorAll('#detailModal [data-detail]').forEach((el) => {
                 el.textContent = labels[el.dataset.detail] || '-';
             });
+            renderStatusHistory(data.history || []);
+            renderProjectActivities(data.activities || []);
             openModal('detailModal');
+        }
+
+        function renderStatusHistory(history) {
+            const list = document.querySelector('#detailModal [data-status-history]');
+            list.replaceChildren();
+
+            if (!history.length) {
+                const empty = document.createElement('li');
+                empty.className = 'text-sm text-slate-500';
+                empty.textContent = 'Belum ada riwayat status.';
+                list.append(empty);
+                return;
+            }
+
+            history.forEach((item) => {
+                const entry = document.createElement('li');
+                entry.className = 'rounded-xl border border-slate-200 bg-slate-50 px-4 py-3';
+                const change = document.createElement('p');
+                change.className = 'text-sm font-medium text-slate-800';
+                change.textContent = item.from ? `${item.from} → ${item.to}` : `Project dibuat dengan status ${item.to}`;
+                const meta = document.createElement('p');
+                meta.className = 'mt-1 text-xs text-slate-500';
+                meta.textContent = `${item.actor} · ${item.date}`;
+                entry.append(change, meta);
+                list.append(entry);
+            });
+        }
+
+        function renderProjectActivities(activities) {
+            const list = document.querySelector('#detailModal [data-project-activities]');
+            list.replaceChildren();
+
+            if (!activities.length) {
+                const empty = document.createElement('li');
+                empty.className = 'text-sm text-slate-500';
+                empty.textContent = 'Belum ada perubahan detail project.';
+                list.append(empty);
+                return;
+            }
+
+            activities.forEach((item) => {
+                const entry = document.createElement('li');
+                entry.className = 'rounded-xl border border-slate-200 bg-slate-50 px-4 py-3';
+                const change = document.createElement('p');
+                change.className = 'text-sm font-medium text-slate-800';
+                change.textContent = `${item.field}: ${item.old ?? '-'} → ${item.new ?? '-'}`;
+                const meta = document.createElement('p');
+                meta.className = 'mt-1 text-xs text-slate-500';
+                meta.textContent = `${item.actor} · ${item.date}`;
+                entry.append(change, meta);
+                list.append(entry);
+            });
         }
 
         function openEdit(btn) {

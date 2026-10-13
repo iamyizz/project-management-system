@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
-use App\Models\Task;
-use Carbon\Carbon;
 
 class UserDashboardController extends Controller
 {
@@ -12,34 +10,27 @@ class UserDashboardController extends Controller
     {
         $userId = auth()->id();
 
-        // Project yang user pegang (sebagai PIC)
-        $myProjects = Project::where('pic_id', $userId)
-            ->count();
+        $assignedProjects = Project::query()->where('pic_id', $userId);
+        $myProjects = (clone $assignedProjects)->count();
+        $myOngoing = (clone $assignedProjects)->whereIn('status', ['planning', 'progress'])->count();
+        $myDone = (clone $assignedProjects)->where('status', 'done')->count();
 
-        // Task dengan status progress (ongoing)
-        $myOngoing = Project::where('pic_id', $userId)
-            ->where('status', 'progress')
-            ->count();
+        $priorityQuery = Project::query()
+            ->where('pic_id', $userId)
+            ->whereIn('status', ['planning', 'progress'])
+            ->whereNotNull('deadline_date')
+            ->whereDate('deadline_date', '<=', today()->addDays(7));
 
-        // Task dengan status done
-        $myDone = Project::where('pic_id', $userId)
-            ->where('status', 'done')
-            ->count();
-
-        // Project dengan deadline dekat (kurang dari 7 hari ke depan)
-        $nearDeadline = Project::where('pic_id', $userId)
-            ->where('status', '!=', 'done')
-            ->where('status', '!=', 'cancel')
-            ->whereBetween('deadline_date', [
-                Carbon::now(),
-                Carbon::now()->addDays(7)
-            ])
-            ->count();
-
-        // Task terbaru (ambil 5 terbaru)
-        $tasks = Project::where('pic_id', $userId)
+        $needsAttention = (clone $priorityQuery)->count();
+        $priorityProjects = (clone $priorityQuery)
             ->with('endUser')
-            ->latest()
+            ->orderBy('deadline_date')
+            ->limit(5)
+            ->get();
+
+        $recentProjects = (clone $assignedProjects)
+            ->with('endUser')
+            ->latest('updated_at')
             ->limit(5)
             ->get();
 
@@ -47,8 +38,9 @@ class UserDashboardController extends Controller
             'myProjects',
             'myOngoing',
             'myDone',
-            'nearDeadline',
-            'tasks'
+            'needsAttention',
+            'priorityProjects',
+            'recentProjects',
         ));
     }
 }
