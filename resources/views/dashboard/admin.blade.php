@@ -41,7 +41,7 @@
                 @foreach ([
                     ['Manage Users',    'Tambah, edit, dan hapus user', route('admin.users.index'), 'bg-indigo-600'],
                     ['Manage Projects', 'Kelola semua project',          route('admin.projects.index'), 'bg-emerald-600'],
-                    ['Laporan',         'Lihat progres & statistik',     '#',                        'bg-amber-500'],
+                    ['Laporan',         'Lihat progres & statistik',     route('admin.reports.index'), 'bg-amber-500'],
                 ] as [$label, $desc, $url, $bg])
                     <a href="{{ $url }}"
                        class="group flex items-center gap-3 sm:gap-4 rounded-lg sm:rounded-2xl bg-white p-4 sm:p-6 shadow-sm ring-1 ring-slate-200 transition hover:shadow-md hover:ring-indigo-400">

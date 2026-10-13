@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title }} | {{ config('app.name') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo%20perusahaan/logo%20ntu%20transparant.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-800 antialiased">
@@ -27,7 +28,7 @@
             ['label' => 'Manage Users', 'route' => 'admin.users.index', 'icon' => $icons['users']],
             ['label' => 'End Users', 'route' => 'admin.end-users.index', 'icon' => $icons['building']],
             ['label' => 'Projects',     'route' => 'admin.projects.index', 'icon' => $icons['folder']],
-            ['label' => 'Laporan',      'route' => null,                'icon' => $icons['chart']],
+            ['label' => 'Laporan',      'route' => 'admin.reports.index', 'icon' => $icons['chart']],
         ]
         : [
             ['label' => 'Dashboard',    'route' => 'user.dashboard',         'icon' => $icons['home']],
@@ -46,9 +47,7 @@
     {{-- Logo Section --}}
     <div class="border-b border-slate-200 px-6 py-6">
         <div class="flex items-center gap-4">
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 text-lg font-bold text-white shadow-md">
-                N
-            </div>
+            <img src="{{ asset('images/logo%20perusahaan/logo%20ntu%20transparant.png') }}" alt="Logo Nuke Teknologi Utama" class="h-12 w-12 shrink-0 object-contain">
             <div class="min-w-0">
                 <h2 class="text-sm font-bold text-slate-900 mb-1">Project Management System</h2>
                 <p class="text-xs font-medium text-indigo-600">Nuke Teknologi Utama</p>

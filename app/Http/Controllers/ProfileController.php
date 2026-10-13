@@ -48,6 +48,12 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        if ($user->isLastActiveAdministrator()) {
+            return Redirect::route('profile.edit')->withErrors([
+                'password' => 'Akun administrator terakhir tidak bisa dihapus.',
+            ], 'userDeletion');
+        }
+
         Auth::logout();
 
         $user->delete();

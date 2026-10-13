@@ -162,7 +162,7 @@ class DummySeeder extends Seeder
                 => 'Implementasi ERP System',
 
 
-            'account'
+            'project_value'
                 => 150000000,
 
 
@@ -174,7 +174,7 @@ class DummySeeder extends Seeder
                 => 'QTN-001-2026',
 
 
-            'quotation_distribusi'
+            'internal_cost'
                 => 90000000,
 
 
@@ -212,7 +212,7 @@ class DummySeeder extends Seeder
                 => 'Website Corporate',
 
 
-            'account'
+            'project_value'
                 => 75000000,
 
 
@@ -224,7 +224,7 @@ class DummySeeder extends Seeder
                 => 'QTN-002-2026',
 
 
-            'quotation_distribusi'
+            'internal_cost'
                 => 45000000,
 
 
@@ -263,7 +263,7 @@ class DummySeeder extends Seeder
                 => 'Maintenance Application',
 
 
-            'account'
+            'project_value'
                 => 50000000,
 
 
@@ -275,7 +275,7 @@ class DummySeeder extends Seeder
                 => 'QTN-003-2026',
 
 
-            'quotation_distribusi'
+            'internal_cost'
                 => 35000000,
 
 

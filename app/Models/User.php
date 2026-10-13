@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['nama', 'email', 'password', 'role','is_active'])]
+#[Fillable(['nama', 'email', 'password', 'role', 'is_active'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -26,6 +26,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
 
@@ -35,5 +36,15 @@ class User extends Authenticatable
     public function projects()
     {
         return $this->hasMany(Project::class, 'pic_id');
+    }
+
+    public function isLastActiveAdministrator(): bool
+    {
+        return $this->role === 'admin'
+            && $this->is_active
+            && static::query()
+                ->where('role', 'admin')
+                ->where('is_active', true)
+                ->count() <= 1;
     }
 }

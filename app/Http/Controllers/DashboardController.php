@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Project;
-use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(): View|RedirectResponse
     {
         if (auth()->user()->role === 'admin') {
             $totalUsers = User::count();
@@ -31,6 +32,6 @@ class DashboardController extends Controller
             ));
         }
 
-        return view('dashboard.user');
+        return redirect()->route('user.dashboard');
     }
 }

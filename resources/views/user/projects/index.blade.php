@@ -5,27 +5,20 @@
         $statuses = [
             'planning' => ['Planning', 'bg-yellow-100 text-yellow-700'],
             'progress' => ['Progress', 'bg-blue-100 text-blue-700'],
-            'on_hold'  => ['On Hold',  'bg-orange-100 text-orange-700'],
             'done'     => ['Done',     'bg-green-100 text-green-700'],
             'cancel'   => ['Cancel',   'bg-red-100 text-red-700'],
         ];
-        $userStatuses = ['planning', 'progress', 'on_hold', 'done'];
+        $userStatuses = ['planning', 'progress', 'done'];
         $details = [
             'project_name'         => ['label' => 'Project Name', 'span' => true],
             'end_user'             => ['label' => 'End User'],
             'pic'                  => ['label' => 'PIC'],
-            'account'              => ['label' => 'Account'],
             'po_number'            => ['label' => 'PO Number'],
             'quotation_number'     => ['label' => 'Quotation Number'],
-            'quotation_distribusi' => ['label' => 'Quotation Distribusi'],
-            'margin'               => ['label' => 'Margin'],
-            'percentage'           => ['label' => 'Percentage'],
             'deadline_date'        => ['label' => 'Deadline'],
             'status'               => ['label' => 'Status'],
         ];
         $formatDate    = fn ($d) => $d ? \Illuminate\Support\Carbon::parse($d)->translatedFormat('d M Y') : null;
-        $formatMoney   = fn ($v) => $v !== null && $v !== '' ? 'Rp ' . number_format((float) $v, 2, ',', '.') : null;
-        $formatPercent = fn ($v) => $v !== null && $v !== '' ? number_format((float) $v, 2, ',', '.') . ' %' : null;
         $formType = old('form_type');
     @endphp
 
@@ -59,9 +52,18 @@
 
         {{-- TABLE CONTAINER --}}
         <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
-            <div class="border-b border-slate-200 p-4">
-                <input id="search" type="text" placeholder="Cari project..." class="{{ $input }}">
-            </div>
+            <form method="GET" action="{{ route('user.projects.index') }}" data-live-filter data-results-target="#projectResults" class="flex flex-col gap-3 border-b border-slate-200 p-4 sm:flex-row">
+                <input name="q" type="search" value="{{ $filters['q'] ?? '' }}" placeholder="Cari project atau End User..." class="{{ $input }}">
+                <select name="status" class="{{ $input }} sm:max-w-xs">
+                    <option value="">Semua status</option>
+                    @foreach ($statuses as $value => [$statusLabel])
+                        <option value="{{ $value }}" @selected(($filters['status'] ?? '') === $value)>{{ $statusLabel }}</option>
+                    @endforeach
+                </select>
+                <a href="{{ route('user.projects.index') }}" data-filter-reset class="shrink-0 rounded-lg border border-slate-300 px-4 py-2 text-center text-sm font-medium text-slate-700 hover:bg-slate-50">Reset</a>
+            </form>
+            <p data-filter-status role="status" aria-live="polite" class="sr-only"></p>
+            <div id="projectResults" data-live-results aria-live="polite">
 
             {{-- DESKTOP: Tabel --}}
             <div class="hidden overflow-x-auto md:block">
@@ -94,12 +96,8 @@
                                         'project_name'         => $project->project_name,
                                         'end_user'             => $project->endUser?->nama,
                                         'pic'                  => $project->pic?->nama,
-                                        'account'              => $formatMoney($project->account),
                                         'po_number'            => $project->po_number,
                                         'quotation_number'     => $project->quotation_number,
-                                        'quotation_distribusi' => $formatMoney($project->quotation_distribusi),
-                                        'margin'               => $formatMoney($project->margin),
-                                        'percentage'           => $formatPercent($project->percentage),
                                         'deadline_date'        => $formatDate($deadline),
                                         'status'               => $statusLabel,
                                     ],
@@ -163,12 +161,8 @@
                                 'project_name'         => $project->project_name,
                                 'end_user'             => $project->endUser?->nama,
                                 'pic'                  => $project->pic?->nama,
-                                'account'              => $formatMoney($project->account),
                                 'po_number'            => $project->po_number,
                                 'quotation_number'     => $project->quotation_number,
-                                'quotation_distribusi' => $formatMoney($project->quotation_distribusi),
-                                'margin'               => $formatMoney($project->margin),
-                                'percentage'           => $formatPercent($project->percentage),
                                 'deadline_date'        => $formatDate($deadline),
                                 'status'               => $statusLabel,
                             ],
@@ -201,12 +195,6 @@
                                     @endif
                                 </span>
                             </div>
-                            @if ($project->account)
-                                <div class="flex justify-between">
-                                    <span class="text-slate-500">Account:</span>
-                                    <span class="font-medium text-slate-900">{{ $formatMoney($project->account) }}</span>
-                                </div>
-                            @endif
                         </div>
 
                         {{-- Action Buttons --}}
@@ -245,23 +233,33 @@
                     {{ $projects->links() }}
                 </div>
             @endif
+            </div>
         </div>
     </div>
 
     {{-- ================= MODAL DETAIL ================= --}}
-    <div id="detailModal" class="modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4">
-        <div class="max-h-screen w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-xl">
-            <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-                <h3 class="text-lg font-semibold text-slate-900">Detail Project</h3>
-                <button type="button" onclick="closeModal('detailModal')" class="text-2xl leading-none text-slate-400 hover:text-slate-600">&times;</button>
+    <div id="detailModal" role="dialog" aria-modal="true" aria-labelledby="projectDetailTitle" class="modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+        <div class="scrollbar-hidden max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-white shadow-2xl ring-1 ring-black/5">
+            <div class="sticky top-0 z-10 flex items-start justify-between border-b border-slate-100 bg-white/95 px-6 py-5 backdrop-blur sm:px-8">
+                <div class="flex items-start gap-4">
+                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75A2.25 2.25 0 016 4.5h4.19c.6 0 1.17.24 1.59.66l1.06 1.06c.42.42.99.66 1.59.66H18a2.25 2.25 0 012.25 2.25v8.25A2.25 2.25 0 0118 19.63H6a2.25 2.25 0 01-2.25-2.25V6.75z" /></svg>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-600">Ringkasan</p>
+                        <h3 id="projectDetailTitle" class="mt-1 text-xl font-bold tracking-tight text-slate-900">Detail Project</h3>
+                        <p class="mt-1 text-sm text-slate-500">Informasi lengkap project yang dipilih.</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('detailModal')" aria-label="Tutup detail project" class="rounded-xl p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">&times;</button>
             </div>
-            <dl class="grid grid-cols-1 gap-4 px-6 py-5 sm:grid-cols-2">
+            <dl class="grid grid-cols-1 gap-3 bg-slate-50/70 px-6 py-6 sm:grid-cols-2 sm:gap-4 sm:px-8">
                 @foreach ($details as $key => $detail)
-                    <div class="{{ !empty($detail['span']) ? 'sm:col-span-2' : '' }}">
-                        <dt class="text-xs font-medium uppercase text-slate-500">{{ $detail['label'] }}</dt>
-                        <dd class="mt-1 text-sm text-slate-900">
+                    <div class="{{ !empty($detail['span']) ? 'sm:col-span-2' : '' }} rounded-2xl border border-slate-200/80 bg-white px-4 py-3.5 shadow-sm shadow-slate-200/40 transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
+                        <dt class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{{ $detail['label'] }}</dt>
+                        <dd class="mt-1.5 break-words text-sm font-semibold text-slate-900">
                             @if ($key === 'status')
-                                <span data-detail="status" class="rounded-full px-3 py-1 text-xs font-medium">-</span>
+                                <span data-detail="status" class="inline-flex rounded-full px-3 py-1 text-xs font-semibold">-</span>
                             @else
                                 <span data-detail="{{ $key }}">-</span>
                             @endif
@@ -269,9 +267,9 @@
                     </div>
                 @endforeach
             </dl>
-            <div class="flex justify-end border-t border-slate-200 px-6 py-4">
+            <div class="flex justify-end border-t border-slate-100 px-6 py-4 sm:px-8">
                 <button type="button" onclick="closeModal('detailModal')"
-                    class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                    class="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2">
                     Tutup
                 </button>
             </div>
@@ -377,24 +375,6 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 document.querySelectorAll('.modal.flex').forEach((m) => closeModal(m.id));
-            }
-        });
-
-        // Pencarian di kedua view (tabel & card)
-        document.getElementById('search').addEventListener('input', function () {
-            const keyword = this.value.toLowerCase().trim();
-            const allRows = document.querySelectorAll('.data-row');
-            let visible = 0;
-
-            allRows.forEach((row) => {
-                const match = row.textContent.toLowerCase().includes(keyword);
-                row.classList.toggle('hidden', !match);
-                if (match) visible++;
-            });
-
-            // Tampilkan pesan "tidak ada hasil"
-            if (document.getElementById('noResultCards')) {
-                document.getElementById('noResultCards').classList.toggle('hidden', visible > 0 || allRows.length === 0);
             }
         });
 

@@ -14,10 +14,10 @@
             'project_name'         => ['label' => 'Project Name', 'required' => true, 'span' => true],
             'end_user_id'          => ['label' => 'End User', 'type' => 'select', 'required' => true, 'options' => $endUsers->pluck('nama', 'id')],
             'pic_id'               => ['label' => 'PIC', 'type' => 'select', 'options' => $pics->pluck('nama', 'id')],
-            'account'              => ['label' => 'Account', 'type' => 'money'],
+            'project_value'        => ['label' => 'Project Value', 'type' => 'money'],
             'po_number'            => ['label' => 'PO Number'],
             'quotation_number'     => ['label' => 'Quotation Number'],
-            'quotation_distribusi' => ['label' => 'Quotation Distribusi', 'type' => 'money'],
+            'internal_cost'        => ['label' => 'Internal Cost', 'type' => 'money'],
             'margin'               => ['label' => 'Margin', 'type' => 'money', 'readonly' => true],
             'percentage'           => ['label' => 'Percentage', 'type' => 'percent', 'readonly' => true],
             'deadline_date'        => ['label' => 'Deadline', 'type' => 'date'],
@@ -71,9 +71,32 @@
 
         {{-- TABLE CONTAINER --}}
         <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
-            <div class="border-b border-slate-200 p-4">
-                <input id="search" type="text" placeholder="Cari project..." class="{{ $input }}">
-            </div>
+            <form method="GET" action="{{ route('admin.projects.index') }}" data-live-filter data-results-target="#projectResults" class="grid gap-3 border-b border-slate-200 p-4 sm:grid-cols-2 lg:grid-cols-5">
+                <input name="q" type="search" value="{{ $filters['q'] ?? '' }}" placeholder="Cari project, customer, PIC..." class="{{ $input }} lg:col-span-2">
+                <select name="status" class="{{ $input }}">
+                    <option value="">Semua status</option>
+                    @foreach ($statuses as $value => [$statusLabel])
+                        <option value="{{ $value }}" @selected(($filters['status'] ?? '') === $value)>{{ $statusLabel }}</option>
+                    @endforeach
+                </select>
+                <select name="pic_id" class="{{ $input }}">
+                    <option value="">Semua PIC</option>
+                    @foreach ($pics as $pic)
+                        <option value="{{ $pic->id }}" @selected((string) ($filters['pic_id'] ?? '') === (string) $pic->id)>{{ $pic->nama }}</option>
+                    @endforeach
+                </select>
+                <select name="end_user_id" class="{{ $input }}">
+                    <option value="">Semua End User</option>
+                    @foreach ($endUsers as $endUser)
+                        <option value="{{ $endUser->id }}" @selected((string) ($filters['end_user_id'] ?? '') === (string) $endUser->id)>{{ $endUser->nama }}</option>
+                    @endforeach
+                </select>
+                <div class="flex gap-2 sm:col-span-2 lg:col-span-5">
+                    <a href="{{ route('admin.projects.index') }}" data-filter-reset class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Reset</a>
+                </div>
+            </form>
+            <p data-filter-status role="status" aria-live="polite" class="sr-only"></p>
+            <div id="projectResults" data-live-results aria-live="polite">
 
             {{-- DESKTOP: Tabel --}}
             <div class="hidden overflow-x-auto md:block">
@@ -233,10 +256,10 @@
                                     @endif
                                 </span>
                             </div>
-                            @if ($project->account)
+                            @if ($project->project_value)
                                 <div class="flex justify-between">
-                                    <span class="text-slate-500">Account:</span>
-                                    <span class="font-medium text-slate-900">Rp {{ number_format($project->account, 2, ',', '.') }}</span>
+                                    <span class="text-slate-500">Project Value:</span>
+                                    <span class="font-medium text-slate-900">Rp {{ number_format($project->project_value, 2, ',', '.') }}</span>
                                 </div>
                             @endif
                         </div>
@@ -278,6 +301,7 @@
                     {{ $projects->links() }}
                 </div>
             @endif
+            </div>
         </div>
     </div>
 
@@ -334,11 +358,11 @@
                                             name="{{ $name }}"
                                             value="{{ $value }}"
                                             step="0.01"
-                                            @if ($name === 'quotation_distribusi') min="0" @endif
+                                            @if ($name === 'internal_cost') min="0" @endif
                                             @if ($type === 'percent') min="-999.99" max="999.99" @endif
                                             class="{{ $input }} {{ $type === 'money' ? 'pl-10' : 'pr-10' }} {{ $readonly ? 'bg-slate-100 cursor-not-allowed' : '' }}"
                                             @if ($readonly) readonly @endif
-                                            data-calculate="{{ in_array($name, ['account', 'quotation_distribusi']) ? 'true' : 'false' }}">
+                                            data-calculate="{{ in_array($name, ['project_value', 'internal_cost']) ? 'true' : 'false' }}">
                                         @if ($type === 'percent')
                                             <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-sm text-slate-500">%</span>
                                         @endif
@@ -374,23 +398,32 @@
     @endforeach
 
     {{-- ================= MODAL DETAIL ================= --}}
-    <div id="detailModal" class="modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4">
-        <div class="max-h-screen w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-xl">
-            <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-                <h3 class="text-lg font-semibold text-slate-900">Detail Project</h3>
-                <button type="button" onclick="closeModal('detailModal')" class="text-2xl leading-none text-slate-400 hover:text-slate-600">&times;</button>
+    <div id="detailModal" role="dialog" aria-modal="true" aria-labelledby="projectDetailTitle" class="modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+        <div class="scrollbar-hidden max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-white shadow-2xl ring-1 ring-black/5">
+            <div class="sticky top-0 z-10 flex items-start justify-between border-b border-slate-100 bg-white/95 px-6 py-5 backdrop-blur sm:px-8">
+                <div class="flex items-start gap-4">
+                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75A2.25 2.25 0 016 4.5h4.19c.6 0 1.17.24 1.59.66l1.06 1.06c.42.42.99.66 1.59.66H18a2.25 2.25 0 012.25 2.25v8.25A2.25 2.25 0 0118 19.63H6a2.25 2.25 0 01-2.25-2.25V6.75z" /></svg>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-600">Ringkasan</p>
+                        <h3 id="projectDetailTitle" class="mt-1 text-xl font-bold tracking-tight text-slate-900">Detail Project</h3>
+                        <p class="mt-1 text-sm text-slate-500">Informasi lengkap project yang dipilih.</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('detailModal')" aria-label="Tutup detail project" class="rounded-xl p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">&times;</button>
             </div>
-            <dl class="grid grid-cols-1 gap-4 px-6 py-5 sm:grid-cols-2">
+            <dl class="grid grid-cols-1 gap-3 bg-slate-50/70 px-6 py-6 sm:grid-cols-2 sm:gap-4 sm:px-8">
                 @foreach ($fields as $name => $field)
-                    <div class="{{ !empty($field['span']) ? 'sm:col-span-2' : '' }}">
-                        <dt class="text-xs font-medium uppercase text-slate-500">{{ $field['label'] }}</dt>
-                        <dd data-detail="{{ $name }}" class="mt-1 text-sm text-slate-900">-</dd>
+                    <div class="{{ !empty($field['span']) ? 'sm:col-span-2' : '' }} rounded-2xl border border-slate-200/80 bg-white px-4 py-3.5 shadow-sm shadow-slate-200/40 transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
+                        <dt class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{{ $field['label'] }}</dt>
+                        <dd data-detail="{{ $name }}" class="mt-1.5 break-words text-sm font-semibold text-slate-900">-</dd>
                     </div>
                 @endforeach
             </dl>
-            <div class="flex justify-end border-t border-slate-200 px-6 py-4">
+            <div class="flex justify-end border-t border-slate-100 px-6 py-4 sm:px-8">
                 <button type="button" onclick="closeModal('detailModal')"
-                    class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                    class="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2">
                     Tutup
                 </button>
             </div>
@@ -403,13 +436,13 @@
         role="dialog"
         aria-modal="true"
         aria-labelledby="endUserDetailTitle"
-        class="modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4"
+        class="modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm"
     >
-        <div class="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white shadow-xl">
-            <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div class="scrollbar-hidden max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white shadow-2xl ring-1 ring-black/5">
+            <div class="sticky top-0 z-10 flex items-start justify-between border-b border-slate-100 bg-white/95 px-6 py-5 backdrop-blur">
                 <h3
                     id="endUserDetailTitle"
-                    class="text-lg font-semibold text-slate-900"
+                    class="text-xl font-bold tracking-tight text-slate-900"
                 >
                     Detail End User
                 </h3>
@@ -418,32 +451,32 @@
                     type="button"
                     onclick="closeModal('endUserDetailModal')"
                     aria-label="Tutup detail end user"
-                    class="rounded text-2xl leading-none text-slate-400 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                    class="rounded-xl p-2 text-2xl leading-none text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                 >
                     &times;
                 </button>
             </div>
 
-            <dl class="grid grid-cols-1 gap-4 px-6 py-5 sm:grid-cols-2">
+            <dl class="grid grid-cols-1 gap-3 bg-slate-50/70 px-6 py-6 sm:grid-cols-2 sm:gap-4">
                 @foreach ($endUserFields as $name => $fieldLabel)
-                    <div class="{{ $name === 'nama' ? 'sm:col-span-2' : '' }}">
-                        <dt class="text-xs font-medium uppercase text-slate-500">
+                    <div class="{{ $name === 'nama' ? 'sm:col-span-2' : '' }} rounded-2xl border border-slate-200/80 bg-white px-4 py-3.5 shadow-sm shadow-slate-200/40 transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
+                        <dt class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                             {{ $fieldLabel }}
                         </dt>
 
                         <dd
                             data-end-user-detail="{{ $name }}"
-                            class="mt-1 whitespace-pre-wrap break-words text-sm text-slate-900"
+                            class="mt-1.5 whitespace-pre-wrap break-words text-sm font-semibold text-slate-900"
                         >-</dd>
                     </div>
                 @endforeach
             </dl>
 
-            <div class="flex justify-end border-t border-slate-200 px-6 py-4">
+            <div class="flex justify-end border-t border-slate-100 px-6 py-4">
                 <button
                     type="button"
                     onclick="closeModal('endUserDetailModal')"
-                    class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                    class="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2"
                 >
                     Tutup
                 </button>
@@ -465,17 +498,17 @@
 
         // Auto-calculate margin & percentage
         function calculateFinance(form) {
-            const accountInput = form.querySelector('[name="account"]');
-            const quotationInput = form.querySelector('[name="quotation_distribusi"]');
+            const projectValueInput = form.querySelector('[name="project_value"]');
+            const internalCostInput = form.querySelector('[name="internal_cost"]');
             const marginInput = form.querySelector('[name="margin"]');
             const percentageInput = form.querySelector('[name="percentage"]');
 
-            if (!accountInput || !quotationInput || !marginInput || !percentageInput) return;
+            if (!projectValueInput || !internalCostInput || !marginInput || !percentageInput) return;
 
-            const account = parseFloat(accountInput.value) || 0;
-            const quotation = parseFloat(quotationInput.value) || 0;
-            const margin = account - quotation;
-            const percentage = account > 0 ? (margin / account) * 100 : 0;
+            const projectValue = parseFloat(projectValueInput.value) || 0;
+            const internalCost = parseFloat(internalCostInput.value) || 0;
+            const margin = projectValue - internalCost;
+            const percentage = projectValue > 0 ? (margin / projectValue) * 100 : 0;
 
             marginInput.value = margin.toFixed(2);
             percentageInput.value = percentage.toFixed(2);
@@ -502,14 +535,14 @@
 
         // Setup auto-calculate listener untuk form
         document.querySelectorAll('form').forEach(form => {
-            const accountInput = form.querySelector('[name="account"]');
-            const quotationInput = form.querySelector('[name="quotation_distribusi"]');
+            const projectValueInput = form.querySelector('[name="project_value"]');
+            const internalCostInput = form.querySelector('[name="internal_cost"]');
 
-            if (accountInput && quotationInput) {
-                accountInput.addEventListener('input', () => calculateFinance(form));
-                accountInput.addEventListener('change', () => calculateFinance(form));
-                quotationInput.addEventListener('input', () => calculateFinance(form));
-                quotationInput.addEventListener('change', () => calculateFinance(form));
+            if (projectValueInput && internalCostInput) {
+                projectValueInput.addEventListener('input', () => calculateFinance(form));
+                projectValueInput.addEventListener('change', () => calculateFinance(form));
+                internalCostInput.addEventListener('input', () => calculateFinance(form));
+                internalCostInput.addEventListener('change', () => calculateFinance(form));
 
                 calculateFinance(form);
             }
@@ -559,14 +592,14 @@
             form.querySelectorAll('.field-error').forEach((el) => el.remove());
 
             setTimeout(() => {
-                const accountInput = form.querySelector('[name="account"]');
-                const quotationInput = form.querySelector('[name="quotation_distribusi"]');
+                const projectValueInput = form.querySelector('[name="project_value"]');
+                const internalCostInput = form.querySelector('[name="internal_cost"]');
 
-                if (accountInput && quotationInput) {
-                    accountInput.addEventListener('input', () => calculateFinance(form));
-                    accountInput.addEventListener('change', () => calculateFinance(form));
-                    quotationInput.addEventListener('input', () => calculateFinance(form));
-                    quotationInput.addEventListener('change', () => calculateFinance(form));
+                if (projectValueInput && internalCostInput) {
+                    projectValueInput.addEventListener('input', () => calculateFinance(form));
+                    projectValueInput.addEventListener('change', () => calculateFinance(form));
+                    internalCostInput.addEventListener('input', () => calculateFinance(form));
+                    internalCostInput.addEventListener('change', () => calculateFinance(form));
 
                     calculateFinance(form);
                 }
@@ -585,24 +618,6 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 document.querySelectorAll('.modal.flex').forEach((m) => closeModal(m.id));
-            }
-        });
-
-        // Pencarian di kedua view (tabel & card)
-        document.getElementById('search').addEventListener('input', function () {
-            const keyword = this.value.toLowerCase().trim();
-            const allRows = document.querySelectorAll('.data-row');
-            let visible = 0;
-
-            allRows.forEach((row) => {
-                const match = row.textContent.toLowerCase().includes(keyword);
-                row.classList.toggle('hidden', !match);
-                if (match) visible++;
-            });
-
-            // Tampilkan pesan "tidak ada hasil"
-            if (document.getElementById('noResultCards')) {
-                document.getElementById('noResultCards').classList.toggle('hidden', visible > 0 || allRows.length === 0);
             }
         });
 

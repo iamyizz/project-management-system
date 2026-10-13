@@ -45,6 +45,9 @@
             <button type="button" onclick="this.parentElement.remove()" class="text-lg font-bold leading-none">&times;</button>
         </div>
     @endif
+    @if (session('error'))
+        <div class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{{ session('error') }}</div>
+    @endif
 
     {{-- Table Container --}}
     <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
@@ -235,24 +238,28 @@
 </div>
 
 {{-- ================= DETAIL MODAL ================= --}}
-<div id="detailModal" class="modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4">
-    <div class="flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-            <h3 class="text-lg font-semibold text-slate-900">Detail End User</h3>
-            <button type="button" onclick="closeModal('detailModal')" class="text-2xl leading-none text-slate-400 transition hover:text-slate-700">&times;</button>
+<div id="detailModal" role="dialog" aria-modal="true" aria-labelledby="endUserDetailTitle" class="modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+    <div class="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-black/5">
+        <div class="flex items-start justify-between border-b border-slate-100 bg-white px-6 py-5">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-600">Ringkasan customer</p>
+                <h3 id="endUserDetailTitle" class="mt-1 text-xl font-bold tracking-tight text-slate-900">Detail End User</h3>
+                <p class="mt-1 text-sm text-slate-500">Informasi customer yang terdaftar.</p>
+            </div>
+            <button type="button" onclick="closeModal('detailModal')" aria-label="Tutup detail End User" class="rounded-xl p-2 text-2xl leading-none text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">&times;</button>
         </div>
 
-        <div class="grid grid-cols-1 gap-5 overflow-y-auto px-6 py-5 sm:grid-cols-2">
+        <div class="scrollbar-hidden grid grid-cols-1 gap-3 overflow-y-auto bg-slate-50/70 px-6 py-6 sm:grid-cols-2 sm:gap-4">
             @foreach ($fields as $field => $meta)
-                <div class="{{ $loop->last ? 'sm:col-span-2' : '' }}">
-                    <p class="text-xs font-medium uppercase tracking-wide text-slate-500">{{ $meta['label'] }}</p>
-                    <p id="detail_{{ $field }}" class="mt-1 break-words font-medium text-slate-900">-</p>
+                <div class="{{ $loop->first ? 'sm:col-span-2' : '' }} rounded-2xl border border-slate-200/80 bg-white px-4 py-3.5 shadow-sm shadow-slate-200/40 transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
+                    <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{{ $meta['label'] }}</p>
+                    <p id="detail_{{ $field }}" class="mt-1.5 break-words text-sm font-semibold text-slate-900">-</p>
                 </div>
             @endforeach
         </div>
 
-        <div class="flex justify-end border-t border-slate-200 bg-slate-50 px-6 py-4">
-            <button type="button" onclick="closeModal('detailModal')" class="{{ $btnSecondary }}">Tutup</button>
+        <div class="flex justify-end border-t border-slate-100 bg-white px-6 py-4">
+            <button type="button" onclick="closeModal('detailModal')" class="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2">Tutup</button>
         </div>
     </div>
 </div>

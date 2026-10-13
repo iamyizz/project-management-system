@@ -12,10 +12,10 @@ class Project extends Model
         'end_user_id',
         'pic_id',
         'project_name',
-        'account',
+        'project_value',
         'po_number',
         'quotation_number',
-        'quotation_distribusi',
+        'internal_cost',
         'margin',
         'percentage',
         'status',
@@ -24,7 +24,8 @@ class Project extends Model
 
     protected $casts = [
         'deadline_date' => 'date',
-        'quotation_distribusi' => 'decimal:2',
+        'project_value' => 'decimal:2',
+        'internal_cost' => 'decimal:2',
         'margin' => 'decimal:2',
         'percentage' => 'decimal:2',
     ];

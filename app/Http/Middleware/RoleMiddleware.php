@@ -13,11 +13,18 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             abort(403);
         }
 
-        if (!in_array(auth()->user()->role, $roles)) {
+        if (! auth()->user()->is_active) {
+            auth()->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            abort(403, 'Akun kamu sudah dinonaktifkan. Hubungi administrator.');
+        }
+
+        if (! in_array(auth()->user()->role, $roles)) {
             abort(403);
         }
 

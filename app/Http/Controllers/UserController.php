@@ -18,17 +18,17 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validateWithBag('create', [
-            'nama'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
-            'role'     => 'required|in:admin,user',
+            'role' => 'required|in:admin,user',
         ]);
 
         User::create([
-            'nama'      => $request->nama,
-            'email'     => $request->email,
-            'password'  => Hash::make($request->password),
-            'role'      => $request->role,
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
             'is_active' => true,
         ]);
 
@@ -40,12 +40,19 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validateWithBag('edit', [
-            'nama'      => 'required|string|max:255',
-            'email'     => 'required|email|unique:users,email,' . $user->id,
-            'password'  => 'nullable|min:8',
-            'role'      => 'required|in:admin,user',
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,'.$user->id,
+            'password' => 'nullable|min:8',
+            'role' => 'required|in:admin,user',
             'is_active' => 'required|boolean',
         ]);
+
+        if ($user->isLastActiveAdministrator()
+            && ($request->role !== 'admin' || ! $request->boolean('is_active'))) {
+            return back()
+                ->withErrors(['role' => 'Minimal harus ada satu administrator aktif.'], 'edit')
+                ->withInput();
+        }
 
         $data = $request->only('nama', 'email', 'role', 'is_active');
 
