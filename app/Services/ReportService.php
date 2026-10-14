@@ -17,7 +17,7 @@ class ReportService
      * @param array<string, mixed> $filters
      * @return array<string, mixed>
      */
-    public function buildReportData(array $filters): array
+    public function buildReportData(array $filters, bool $forPrint = false): array
     {
         $projectQuery = $this->filteredProjects($filters);
         $summary = (clone $projectQuery)
@@ -26,10 +26,8 @@ class ReportService
         $statusCounts = $this->statusCounts($projectQuery);
         $statusSegments = $this->statusSegments($statusCounts, (int) $summary->total_projects);
         $monthlyFinancials = $this->monthlyFinancials($projectQuery);
-        $projects = $this->applyTableFilters(clone $projectQuery, $filters)
-            ->latest()
-            ->paginate(15)
-            ->withQueryString();
+        $projectsQuery = $this->applyTableFilters(clone $projectQuery, $filters)->latest();
+        $projects = $forPrint ? $projectsQuery->get() : $projectsQuery->paginate(15)->withQueryString();
         $pics = User::query()->where('role', 'user')->orderBy('nama')->get(['id', 'nama']);
         $endUsers = EndUser::query()->orderBy('nama')->get(['id', 'nama']);
         $actionable = (clone $projectQuery)->whereNotIn('status', ['done', 'cancel']);
@@ -50,6 +48,7 @@ class ReportService
         $marginPercentage = (float) $summary->total_value > 0
             ? ((float) $summary->total_margin / (float) $summary->total_value) * 100
             : 0;
+        $isPrint = $forPrint;
 
         return compact(
             'filters',
@@ -64,6 +63,7 @@ class ReportService
             'upcomingCount',
             'upcomingProjects',
             'marginPercentage',
+            'isPrint',
         );
     }
 

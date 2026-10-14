@@ -165,7 +165,13 @@ liveFilterForms.forEach((form) => {
         if (deadlineCard) {
             const scopeInput = form.querySelector('[name="deadline_scope"]');
             const selectedScope = deadlineCard.dataset.deadlineScope;
-            scopeInput.value = scopeInput.value === selectedScope ? '' : selectedScope;
+
+            if (form.hasAttribute('data-reset-status-on-scope')) {
+                const statusInput = form.querySelector('[name="status"]');
+                if (statusInput) statusInput.value = '';
+            }
+
+            scopeInput.value = selectedScope === 'all' || scopeInput.value === selectedScope ? '' : selectedScope;
             loadResults(urlFromForm(), true, true);
             return;
         }

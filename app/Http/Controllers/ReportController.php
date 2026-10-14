@@ -11,7 +11,10 @@ class ReportController extends Controller
 {
     public function index(ReportFilterRequest $request, ReportService $reportService): View
     {
-        return view('admin.reports.index', $reportService->buildReportData($request->validated()));
+        return view('admin.reports.index', $reportService->buildReportData(
+            $request->validated(),
+            $request->boolean('print'),
+        ));
     }
 
     public function export(ReportFilterRequest $request, ReportService $reportService): StreamedResponse

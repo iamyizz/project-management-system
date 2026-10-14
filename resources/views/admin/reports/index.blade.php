@@ -19,11 +19,11 @@
             </div>
             <div class="flex flex-wrap gap-2 print:hidden">
                 <a href="{{ route('admin.reports.export', request()->query()) }}" data-report-export class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700">
-                    <span aria-hidden="true">↓</span> Unduh Excel / CSV
+                    <span aria-hidden="true">↓</span> Unduh CSV
                 </a>
-                <button type="button" onclick="window.print()" class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
+                <a href="{{ route('admin.reports.index', [...request()->except('print'), 'print' => 1]) }}" class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
                     Cetak / PDF
-                </button>
+                </a>
             </div>
         </div>
 
@@ -108,16 +108,7 @@
         </section>
 
         @php
-            $statusStops = [];
             $statusOffset = 0;
-            foreach ($statusSegments as $segment) {
-                if ($segment['percent'] > 0) {
-                    $nextOffset = $statusOffset + $segment['percent'];
-                    $statusStops[] = "{$segment['color']} {$statusOffset}% {$nextOffset}%";
-                    $statusOffset = $nextOffset;
-                }
-            }
-            $statusGradient = $statusStops ? 'conic-gradient(' . implode(', ', $statusStops) . ')' : 'conic-gradient(#e2e8f0 0% 100%)';
             $maxMonthlyValue = max(1, $monthlyFinancials->max(fn ($month) => max(abs($month['value']), abs($month['margin']))));
         @endphp
 
@@ -128,8 +119,20 @@
                     <p class="mt-1 text-xs text-slate-500">Sebaran status proyek yang sesuai filter.</p>
                 </div>
                 <div class="mt-5 flex flex-wrap items-center justify-center gap-6 sm:justify-start">
-                    <div class="relative h-36 w-36 shrink-0 rounded-full" style="background: {{ $statusGradient }}" role="img" aria-label="Diagram komposisi status project">
-                        <div class="absolute inset-5 flex flex-col items-center justify-center rounded-full bg-white">
+                    <div class="report-status-chart relative h-36 w-36 shrink-0" role="img" aria-label="Diagram komposisi status proyek">
+                        <svg viewBox="0 0 120 120" class="h-full w-full" aria-hidden="true">
+                            <g transform="rotate(-90 60 60)">
+                                <circle cx="60" cy="60" r="46" fill="none" stroke="#e2e8f0" stroke-width="14" pathLength="100" />
+                                @foreach ($statusSegments as $segment)
+                                    @if ($segment['percent'] > 0)
+                                        <circle cx="60" cy="60" r="46" fill="none" stroke="{{ $segment['color'] }}" stroke-width="14" stroke-dasharray="{{ $segment['percent'] }} 100" stroke-dashoffset="{{ -$statusOffset }}" pathLength="100" />
+                                        @php $statusOffset += $segment['percent']; @endphp
+                                    @endif
+                                @endforeach
+                            </g>
+                            <circle cx="60" cy="60" r="34" fill="#fff" />
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
                             <span class="text-2xl font-bold text-slate-900">{{ number_format((int) $summary->total_projects) }}</span>
                             <span class="text-xs text-slate-500">Proyek</span>
                         </div>
@@ -183,7 +186,7 @@
                 </div>
             </div>
             @if ($monthlyFinancials->isNotEmpty())
-                <div class="mt-6 pb-2">
+                <div class="report-chart mt-6 pb-2">
                     <div class="flex gap-2 sm:gap-3" aria-label="Grafik tren nilai proyek dan margin per bulan">
                         <div class="flex h-48 w-11 shrink-0 flex-col justify-between pb-1 text-right text-[9px] tabular-nums text-slate-500 sm:w-16 sm:text-[10px]" aria-hidden="true">
                             @foreach ([1, 0.75, 0.5, 0.25, 0] as $tick)
@@ -205,15 +208,15 @@
                             @endphp
                             <div class="flex h-full min-w-0 flex-1 flex-col items-center justify-end">
                                 <div class="flex h-full w-full items-end justify-center gap-1.5">
-                    <button type="button" aria-label="{{ $month['label'] }} · Nilai proyek: {{ $formatCompactMoney($month['value']) }}" title="{{ $month['label'] }} · Nilai proyek: {{ $formatCompactMoney($month['value']) }}" class="group/bar relative w-1/3 max-w-8 rounded-t-md bg-indigo-500 transition-colors hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400" style="height: {{ $valueHeight }}%">
+                    <button type="button" aria-label="{{ $month['label'] }} · Nilai proyek: {{ $formatCompactMoney($month['value']) }}" title="{{ $month['label'] }} · Nilai proyek: {{ $formatCompactMoney($month['value']) }}" class="report-chart-bar report-chart-bar-value group/bar relative w-1/3 max-w-8 rounded-t-md bg-indigo-500 transition-colors hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400" style="height: {{ $valueHeight }}%">
                         <span class="pointer-events-none absolute {{ $loop->first ? 'left-0 translate-x-0' : ($loop->last ? 'right-0 translate-x-0' : 'left-1/2 -translate-x-1/2') }} top-1 z-30 hidden whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] font-semibold text-white shadow-lg group-hover/bar:block group-focus-visible/bar:block">Nilai proyek<br>{{ $formatCompactMoney($month['value']) }}</span>
                                     </button>
-                                    <button type="button" aria-label="{{ $month['label'] }} · Margin: {{ $formatCompactMoney($month['margin']) }}" title="{{ $month['label'] }} · Margin: {{ $formatCompactMoney($month['margin']) }}" class="group/bar relative w-1/3 max-w-8 rounded-t-md {{ $month['margin'] < 0 ? 'bg-rose-500 hover:bg-rose-700' : 'bg-emerald-500 hover:bg-emerald-700' }} transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400" style="height: {{ $marginHeight }}%">
+                                    <button type="button" aria-label="{{ $month['label'] }} · Margin: {{ $formatCompactMoney($month['margin']) }}" title="{{ $month['label'] }} · Margin: {{ $formatCompactMoney($month['margin']) }}" class="report-chart-bar {{ $month['margin'] < 0 ? 'report-chart-bar-negative bg-rose-500 hover:bg-rose-700' : 'report-chart-bar-margin bg-emerald-500 hover:bg-emerald-700' }} group/bar relative w-1/3 max-w-8 rounded-t-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400" style="height: {{ $marginHeight }}%">
                                         <span class="pointer-events-none absolute {{ $loop->first ? 'left-0 translate-x-0' : ($loop->last ? 'right-0 translate-x-0' : 'left-1/2 -translate-x-1/2') }} top-1 z-30 hidden whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] font-semibold text-white shadow-lg group-hover/bar:block group-focus-visible/bar:block">Margin<br>{{ $formatCompactMoney($month['margin']) }}</span>
                                     </button>
                                 </div>
-                                <span class="mt-2 shrink-0 whitespace-nowrap text-[9px] font-medium text-slate-500 sm:text-[10px]">{{ str($month['label'])->before(' ') }}</span>
-                                <span class="hidden whitespace-nowrap text-[10px] font-medium text-slate-500 sm:mt-2 sm:block">{{ $month['label'] }}</span>
+                                <span class="report-month-short mt-2 shrink-0 whitespace-nowrap text-[9px] font-medium text-slate-500 sm:text-[10px]">{{ str($month['label'])->before(' ') }}</span>
+                                <span class="report-month-full hidden whitespace-nowrap text-[10px] font-medium text-slate-500 sm:mt-2 sm:block">{{ $month['label'] }}</span>
                             </div>
                         @endforeach
                             </div>
@@ -242,9 +245,11 @@
                     <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400" aria-hidden="true">⌕</span>
                     <input form="reportFilters" type="search" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Cari proyek, PIC, atau pelanggan…" class="workspace-input h-10 pl-9" autocomplete="off">
                 </label>
-                <p class="text-xs text-slate-500">Menampilkan {{ $projects->firstItem() ?? 0 }}–{{ $projects->lastItem() ?? 0 }} dari {{ $projects->total() }} proyek</p>
+                @unless ($isPrint)
+                    <p class="text-xs text-slate-500">Menampilkan {{ $projects->firstItem() ?? 0 }}–{{ $projects->lastItem() ?? 0 }} dari {{ $projects->total() }} proyek</p>
+                @endunless
             </div>
-            <div class="divide-y divide-slate-100 md:hidden">
+            <div class="report-mobile-list divide-y divide-slate-100 md:hidden">
                 @forelse ($projects as $project)
                     @php
                         $statusClass = match ($project->status) {
@@ -275,7 +280,7 @@
                     <p class="px-5 py-10 text-center text-sm text-slate-500">Belum ada proyek untuk filter ini.</p>
                 @endforelse
             </div>
-            <div class="hidden overflow-x-auto md:block">
+            <div class="report-desktop-table hidden overflow-x-auto md:block">
                 <table class="workspace-table w-full text-left text-sm">
                     <thead class="bg-slate-50 text-xs uppercase text-slate-500">
                         <tr>
@@ -318,10 +323,19 @@
                     </tbody>
                 </table>
             </div>
-            @if ($projects->hasPages())
-                <div class="border-t border-slate-200 p-4">{{ $projects->links() }}</div>
+            @if (!$isPrint && $projects->hasPages())
+                <div class="report-pagination border-t border-slate-200 p-4">{{ $projects->links() }}</div>
             @endif
         </section>
         </div>
     </div>
+@if ($isPrint)
+    <script>
+        window.addEventListener('afterprint', () => {
+            window.location.replace(@js(route('admin.reports.index', request()->except('print'))));
+        }, { once: true });
+
+        window.addEventListener('load', () => window.setTimeout(() => window.print(), 150));
+    </script>
+@endif
 </x-admin-layout>

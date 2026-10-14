@@ -50,12 +50,27 @@
 }
 
 @media print {
+    @page {
+        size: A4 landscape;
+        margin: 12mm;
+    }
+
     #sidebar,
     #overlay,
     header,
     form[data-live-filter],
     [data-filter-status] {
         display: none !important;
+    }
+
+    body,
+    main {
+        background: #fff !important;
+        color: #0f172a !important;
+    }
+
+    body {
+        font-size: 9pt;
     }
 
     .lg\:pl-64 {
@@ -65,7 +80,10 @@
     main {
         min-height: 0 !important;
         padding: 0 !important;
-        background: #fff !important;
+    }
+
+    main > div {
+        max-width: none !important;
     }
 
     #reportResults {
@@ -76,6 +94,85 @@
     .workspace-stat {
         box-shadow: none !important;
         break-inside: avoid;
+    }
+
+    .report-mobile-list,
+    .report-month-short {
+        display: none !important;
+    }
+
+    .report-month-full {
+        display: inline !important;
+    }
+
+    .report-chart-bar {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        border: 1px solid currentColor !important;
+        min-height: 2px !important;
+    }
+
+    .report-chart {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        break-inside: avoid;
+    }
+
+    .report-status-chart,
+    .report-status-chart svg {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        overflow: visible !important;
+    }
+
+    .report-chart-bar-value {
+        color: #4f46e5 !important;
+        background-color: #6366f1 !important;
+    }
+
+    .report-chart-bar-margin {
+        color: #059669 !important;
+        background-color: #10b981 !important;
+    }
+
+    .report-chart-bar-negative {
+        color: #e11d48 !important;
+        background-color: #f43f5e !important;
+    }
+
+    .report-desktop-table {
+        display: block !important;
+        overflow: visible !important;
+    }
+
+    section[data-report-table] {
+        break-inside: auto !important;
+    }
+
+    .report-desktop-table table {
+        width: 100% !important;
+        font-size: 8pt !important;
+    }
+
+    .report-desktop-table thead {
+        display: table-header-group;
+    }
+
+    .report-desktop-table thead th {
+        position: static !important;
+    }
+
+    .report-desktop-table tr {
+        break-inside: avoid;
+    }
+
+    .report-desktop-table th,
+    .report-desktop-table td {
+        padding: 5pt 7pt !important;
+    }
+
+    .report-pagination {
+        display: none !important;
     }
 }
 
