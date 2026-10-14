@@ -26,15 +26,15 @@
 
     $menus = auth()->user()->role === 'admin'
         ? [
-            ['label' => 'Dashboard',    'route' => 'dashboard',         'icon' => $icons['home']],
-            ['label' => 'Manage Users', 'route' => 'admin.users.index', 'icon' => $icons['users']],
-            ['label' => 'End Users', 'route' => 'admin.end-users.index', 'icon' => $icons['building']],
-            ['label' => 'Projects',     'route' => 'admin.projects.index', 'icon' => $icons['folder']],
+            ['label' => 'Beranda', 'route' => 'dashboard',         'icon' => $icons['home']],
+            ['label' => 'Kelola Pengguna', 'route' => 'admin.users.index', 'icon' => $icons['users']],
+            ['label' => 'Pelanggan', 'route' => 'admin.end-users.index', 'icon' => $icons['building']],
+            ['label' => 'Proyek',     'route' => 'admin.projects.index', 'icon' => $icons['folder']],
             ['label' => 'Laporan',      'route' => 'admin.reports.index', 'icon' => $icons['chart']],
         ]
         : [
-            ['label' => 'Dashboard',    'route' => 'user.dashboard',         'icon' => $icons['home']],
-            ['label' => 'Project Saya', 'route' => 'user.projects.index',    'icon' => $icons['folder']],
+            ['label' => 'Beranda',    'route' => 'user.dashboard',         'icon' => $icons['home']],
+            ['label' => 'Proyek Saya', 'route' => 'user.projects.index',    'icon' => $icons['folder']],
         ];
 @endphp
 
@@ -51,14 +51,14 @@
             <img src="{{ asset('images/logo%20perusahaan/logo%20ntu%20transparant.png') }}" alt="Logo Nuke Teknologi Utama" class="h-12 w-12 shrink-0 rounded-xl bg-slate-50 p-1 object-contain ring-1 ring-slate-200/70">
             <div class="min-w-0">
                 <p class="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-600">NTU Workspace</p>
-                <h2 class="text-sm font-bold leading-snug text-slate-900">Project Management</h2>
+                <h2 class="text-sm font-bold leading-snug text-slate-900">Manajemen Proyek</h2>
             </div>
         </div>
     </div>
 
     {{-- Menu Section --}}
     <nav class="flex-1 overflow-y-auto px-3 py-6">
-        <p class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Workspace</p>
+        <p class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Ruang Kerja</p>
 
         <div class="space-y-2">
             @foreach ($menus as $menu)
@@ -128,8 +128,8 @@
                                 <form method="POST" action="{{ route('notifications.read', $notification->id) }}" class="border-b border-slate-100 last:border-0">
                                     @csrf
                                     <button class="w-full px-4 py-3 text-left transition hover:bg-slate-50 {{ $notification->read_at ? '' : 'bg-indigo-50/60' }}">
-                                        <span class="block text-sm font-medium text-slate-800">{{ $notification->data['message'] ?? 'Ada pembaruan project.' }}</span>
-                                        <span class="mt-1 block truncate text-xs text-slate-500">{{ $notification->data['project_name'] ?? '' }}{{ isset($notification->data['deadline']) ? ' · Deadline '.\Illuminate\Support\Carbon::parse($notification->data['deadline'])->translatedFormat('d M Y') : '' }}</span>
+                                        <span class="block text-sm font-medium text-slate-800">{{ $notification->data['message'] ?? 'Ada pembaruan proyek.' }}</span>
+                                        <span class="mt-1 block truncate text-xs text-slate-500">{{ $notification->data['project_name'] ?? '' }}{{ isset($notification->data['deadline']) ? ' · Tenggat '.\Illuminate\Support\Carbon::parse($notification->data['deadline'])->translatedFormat('d M Y') : '' }}</span>
                                     </button>
                                 </form>
                             @empty

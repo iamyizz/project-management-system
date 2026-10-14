@@ -1,4 +1,4 @@
-<x-admin-layout title="Dashboard Admin">
+<x-admin-layout title="Beranda Admin">
     <div class="space-y-7 sm:space-y-8">
 
         {{-- Banner --}}
@@ -10,21 +10,21 @@
                 <div>
                     <p class="text-xs font-semibold text-indigo-700">Ringkasan workspace</p>
                     <h2 class="mt-1 text-xl font-bold tracking-tight text-slate-950 sm:text-2xl">Selamat datang, {{ auth()->user()->nama }}</h2>
-                    <p class="mt-1.5 max-w-xl text-sm leading-6 text-slate-500">Pantau project, kelola tim, dan lihat perkembangan operasional perusahaan dari satu tempat.</p>
+                    <p class="mt-1.5 max-w-xl text-sm leading-6 text-slate-500">Pantau proyek, kelola tim, dan lihat perkembangan operasional perusahaan dari satu tempat.</p>
                 </div>
             </div>
             <a href="{{ route('admin.projects.index') }}" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500/20">
-                    Kelola project <span aria-hidden="true">&rarr;</span>
+                    Kelola proyek <span aria-hidden="true">&rarr;</span>
             </a>
         </div>
 
         {{-- Statistik - 2x2 di Mobile, 4 kolom di Desktop --}}
         @php
             $stats = [
-                ['label' => 'Total user',   'value' => $totalUsers ?? 0,    'class' => 'bg-indigo-50 text-indigo-700', 'note' => 'Akun terdaftar'],
-                ['label' => 'Total project', 'value' => $totalProjects ?? 0, 'class' => 'bg-emerald-50 text-emerald-700', 'note' => 'Seluruh project'],
-                ['label' => 'Sedang berjalan', 'value' => $ongoingTasks ?? 0,  'class' => 'bg-amber-50 text-amber-700', 'note' => 'Status progress'],
-                ['label' => 'Project selesai',  'value' => $doneTasks ?? 0,     'class' => 'bg-sky-50 text-sky-700', 'note' => 'Status done'],
+                ['label' => 'Total pengguna',   'value' => $totalUsers ?? 0,    'class' => 'bg-indigo-50 text-indigo-700', 'note' => 'Akun terdaftar'],
+                ['label' => 'Total proyek', 'value' => $totalProjects ?? 0, 'class' => 'bg-emerald-50 text-emerald-700', 'note' => 'Seluruh proyek'],
+                ['label' => 'Sedang berjalan', 'value' => $ongoingTasks ?? 0,  'class' => 'bg-amber-50 text-amber-700', 'note' => 'Status berjalan'],
+                ['label' => 'Proyek selesai',  'value' => $doneTasks ?? 0,     'class' => 'bg-sky-50 text-sky-700', 'note' => 'Status selesai'],
             ];
         @endphp
 
@@ -50,9 +50,9 @@
             </div>
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 @foreach ([
-                    ['Manage Users',    'Atur akses dan akun tim', route('admin.users.index'), 'bg-indigo-600'],
-                    ['End Users', 'Kelola data customer', route('admin.end-users.index'), 'bg-sky-600'],
-                    ['Projects', 'Kelola seluruh project', route('admin.projects.index'), 'bg-emerald-600'],
+                    ['Kelola Pengguna',    'Atur akses dan akun tim', route('admin.users.index'), 'bg-indigo-600'],
+                    ['Pelanggan', 'Kelola data pelanggan', route('admin.end-users.index'), 'bg-sky-600'],
+                    ['Proyek', 'Kelola seluruh proyek', route('admin.projects.index'), 'bg-emerald-600'],
                     ['Laporan',         'Pantau progres dan nilai',     route('admin.reports.index'), 'bg-amber-500'],
                 ] as [$label, $desc, $url, $bg])
                     <a href="{{ $url }}"
@@ -75,8 +75,8 @@
         {{-- Project Terbaru --}}
         <div class="workspace-panel overflow-hidden">
             <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-5 sm:px-6">
-                <div><p class="workspace-kicker">Aktivitas terbaru</p><h3 class="mt-1 text-lg font-bold tracking-tight text-slate-900">Project terbaru</h3></div>
-                <a href="{{ route('admin.projects.index') }}" class="shrink-0 rounded-xl px-3 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50">Semua project <span aria-hidden="true">&rarr;</span></a>
+                <div><p class="workspace-kicker">Aktivitas terbaru</p><h3 class="mt-1 text-lg font-bold tracking-tight text-slate-900">Proyek terbaru</h3></div>
+                <a href="{{ route('admin.projects.index') }}" class="shrink-0 rounded-xl px-3 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50">Semua proyek <span aria-hidden="true">&rarr;</span></a>
             </div>
 
             {{-- Desktop: Tabel --}}
@@ -85,10 +85,10 @@
                     <thead class="bg-slate-50 text-xs uppercase text-slate-500">
                         <tr>
                             <th class="px-6 py-3 font-semibold">No</th>
-                            <th class="px-6 py-3 font-semibold">Project Name</th>
-                            <th class="px-6 py-3 font-semibold">End User</th>
+                            <th class="px-6 py-3 font-semibold">Nama proyek</th>
+                            <th class="px-6 py-3 font-semibold">Pelanggan</th>
                             <th class="px-6 py-3 font-semibold">PIC</th>
-                            <th class="px-6 py-3 font-semibold">Deadline</th>
+                            <th class="px-6 py-3 font-semibold">Tenggat</th>
                             <th class="px-6 py-3 font-semibold">Status</th>
                         </tr>
                     </thead>
@@ -115,7 +115,7 @@
                                     @if ($project->deadline_date)
                                         {{ $project->deadline_date->translatedFormat('d M Y') }}
                                         @if ($overdue)
-                                            <span class="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">Overdue</span>
+                                            <span class="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">Terlambat</span>
                                         @endif
                                     @else
                                         -
@@ -123,13 +123,13 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $badge }}">
-                                        {{ ucfirst($project->status) }}
+                                        {{ ['planning' => 'Direncanakan', 'progress' => 'Berjalan', 'done' => 'Selesai', 'cancel' => 'Dibatalkan'][$project->status] ?? ucfirst($project->status) }}
                                     </span>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-10 text-center text-slate-500">Belum ada project</td>
+                                <td colspan="6" class="px-6 py-10 text-center text-slate-500">Belum ada proyek</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -158,7 +158,7 @@
                                 <p class="truncate text-sm text-slate-600">{{ $project->endUser?->nama ?? '-' }}</p>
                             </div>
                             <span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold {{ $badge }}">
-                                {{ ucfirst($project->status) }}
+                                {{ ['planning' => 'Direncanakan', 'progress' => 'Berjalan', 'done' => 'Selesai', 'cancel' => 'Dibatalkan'][$project->status] ?? ucfirst($project->status) }}
                             </span>
                         </div>
 
@@ -168,11 +168,11 @@
                                 <span class="font-medium">{{ $project->pic?->nama ?? '-' }}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-slate-500">Deadline:</span>
+                                <span class="text-slate-500">Tenggat:</span>
                                 <span class="font-medium {{ $overdue ? 'text-red-600' : '' }}">
                                     {{ $project->deadline_date?->translatedFormat('d M Y') ?? '-' }}
                                     @if ($overdue)
-                                        <span class="ml-1 text-red-600">(Overdue)</span>
+                                        <span class="ml-1 text-red-600">(Terlambat)</span>
                                     @endif
                                 </span>
                             </div>
@@ -180,7 +180,7 @@
                     </div>
                 @empty
                     <div class="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center">
-                        <p class="text-sm text-slate-500">Belum ada project</p>
+                        <p class="text-sm text-slate-500">Belum ada proyek</p>
                     </div>
                 @endforelse
             </div>

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Services\ProjectService;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -23,9 +25,10 @@ class UserProjectController extends Controller
         $projects = Project::with(['endUser:id,nama,industri,contact,telepon,email,kota', 'pic:id,nama', 'statusHistories', 'activities'])
             ->where('pic_id', $userId)
             ->when($filters['q'] ?? null, function ($query, string $search): void {
-                $query->where(function ($query) use ($search): void {
-                    $query->where('project_name', 'like', "%{$search}%")
-                        ->orWhereHas('endUser', fn ($query) => $query->where('nama', 'like', "%{$search}%"));
+                $escapedSearch = ProjectService::escapeLikeWildcards($search);
+                $query->where(function ($query) use ($escapedSearch): void {
+                    $query->where('project_name', 'like', "%{$escapedSearch}%")
+                        ->orWhereHas('endUser', fn ($query) => $query->where('nama', 'like', "%{$escapedSearch}%"));
                 });
             })
             ->when($filters['status'] ?? null, fn ($query, string $status) => $query->where('status', $status))
@@ -55,7 +58,7 @@ class UserProjectController extends Controller
         ));
     }
 
-    public function update(Request $request, Project $project)
+    public function update(Request $request, Project $project): RedirectResponse
     {
         abort_if((int) $project->pic_id !== (int) auth()->id(), 403);
 

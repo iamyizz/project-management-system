@@ -1,4 +1,4 @@
-<x-admin-layout title="End Users">
+<x-admin-layout title="Pelanggan">
 @php
     $input        = 'w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20';
     $label        = 'mb-1.5 block text-sm font-medium text-slate-700';
@@ -11,7 +11,7 @@
     $fields = [
         'nama'     => ['label' => 'Nama',     'type' => 'text',  'required' => true],
         'industri' => ['label' => 'Industri', 'type' => 'text'],
-        'contact'  => ['label' => 'Contact',  'type' => 'text'],
+        'contact'  => ['label' => 'Narahubung',  'type' => 'text'],
         'telepon'  => ['label' => 'Telepon',  'type' => 'tel'],
         'email'    => ['label' => 'Email',    'type' => 'email'],
         'kota'     => ['label' => 'Kota',     'type' => 'text'],
@@ -27,15 +27,15 @@
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <p class="workspace-kicker">Relasi bisnis</p>
-            <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">End User Management</h2>
-            <p class="mt-2 text-sm text-slate-500">Simpan informasi customer dan contact person yang terhubung ke project.</p>
+            <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Manajemen Pelanggan</h2>
+            <p class="mt-2 text-sm text-slate-500">Simpan informasi pelanggan dan narahubung yang terhubung ke proyek.</p>
         </div>
 
         <button type="button" onclick="openModal('createModal')" class="{{ $btnPrimary }}">
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/>
             </svg>
-            Tambah End User
+            Tambah pelanggan
         </button>
     </div>
 
@@ -67,7 +67,7 @@
                     <tr>
                         <th class="px-6 py-3 font-semibold">Nama</th>
                         <th class="px-6 py-3 font-semibold">Industri</th>
-                        <th class="px-6 py-3 font-semibold">Contact</th>
+                        <th class="px-6 py-3 font-semibold">Narahubung</th>
                         <th class="px-6 py-3 font-semibold">Kota</th>
                         <th class="px-6 py-3 text-right font-semibold">Aksi</th>
                     </tr>
@@ -110,7 +110,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-500">Belum ada End User.</td>
+                            <td colspan="5" class="px-6 py-12 text-center text-slate-500">Belum ada pelanggan.</td>
                         </tr>
                     @endforelse
 
@@ -153,7 +153,7 @@
                         @endif
                         @if ($endUser->contact)
                             <div class="flex justify-between">
-                                <span class="text-slate-500">Contact:</span>
+                                <span class="text-slate-500">Narahubung:</span>
                                 <span class="font-medium text-slate-900">{{ $endUser->contact }}</span>
                             </div>
                         @endif
@@ -179,8 +179,8 @@
                 </div>
             @empty
                 <div class="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center text-slate-500">
-                    <p class="font-medium">Belum ada End User</p>
-                    <p class="mt-1 text-sm">Klik tombol "Tambah End User" untuk menambahkan customer baru</p>
+                    <p class="font-medium">Belum ada pelanggan</p>
+                    <p class="mt-1 text-sm">Klik tombol "Tambah pelanggan" untuk menambahkan pelanggan baru</p>
                 </div>
             @endforelse
 
@@ -205,7 +205,7 @@
             <input type="hidden" name="form_type" value="create">
 
             <div class="border-b border-slate-200 px-6 py-4">
-                <h3 class="text-lg font-semibold text-slate-900">Tambah End User</h3>
+                <h3 class="text-lg font-semibold text-slate-900">Tambah pelanggan</h3>
             </div>
 
             <div class="space-y-4 overflow-y-auto px-6 py-5">
@@ -248,10 +248,10 @@
         <div class="flex items-start justify-between border-b border-slate-100 bg-white px-6 py-5">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-600">Ringkasan customer</p>
-                <h3 id="endUserDetailTitle" class="mt-1 text-xl font-bold tracking-tight text-slate-900">Detail End User</h3>
+                <h3 id="endUserDetailTitle" class="mt-1 text-xl font-bold tracking-tight text-slate-900">Detail pelanggan</h3>
                 <p class="mt-1 text-sm text-slate-500">Informasi customer yang terdaftar.</p>
             </div>
-            <button type="button" onclick="closeModal('detailModal')" aria-label="Tutup detail End User" class="rounded-xl p-2 text-2xl leading-none text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">&times;</button>
+            <button type="button" onclick="closeModal('detailModal')" aria-label="Tutup detail pelanggan" class="rounded-xl p-2 text-2xl leading-none text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">&times;</button>
         </div>
 
         <div class="scrollbar-hidden grid grid-cols-1 gap-3 overflow-y-auto bg-slate-50/70 px-6 py-6 sm:grid-cols-2 sm:gap-4">
@@ -283,7 +283,7 @@
             <input type="hidden" name="edit_id" id="edit_id" value="{{ $formType === 'edit' ? old('edit_id') : '' }}">
 
             <div class="border-b border-slate-200 px-6 py-4">
-                <h3 class="text-lg font-semibold text-slate-900">Edit End User</h3>
+                <h3 class="text-lg font-semibold text-slate-900">Ubah pelanggan</h3>
             </div>
 
             <div class="space-y-4 overflow-y-auto px-6 py-5">
@@ -314,7 +314,7 @@
 
             <div class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
                 <button type="button" onclick="closeModal('editModal')" class="{{ $btnSecondary }}">Batal</button>
-                <button type="submit" class="{{ $btnPrimary }}">Update</button>
+                <button type="submit" class="{{ $btnPrimary }}">Simpan perubahan</button>
             </div>
         </form>
     </div>
@@ -333,9 +333,15 @@
 
     function closeModal(id) {
         const modal = document.getElementById(id);
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
+        if (!modal || modal.classList.contains('hidden')) return;
+
+        window.closeModalAnimated(modal, () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            if (!document.querySelector('.modal.flex')) {
+                document.body.classList.remove('overflow-hidden');
+            }
+        });
     }
 
     // Ambil data dari elemen yang klik

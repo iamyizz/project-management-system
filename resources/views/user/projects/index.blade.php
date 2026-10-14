@@ -1,27 +1,27 @@
-<x-admin-layout title="Project Saya">
+<x-admin-layout title="Proyek Saya">
     @php
         $input    = 'w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20';
         $btnSmall = 'rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50';
         $statuses = [
-            'planning' => ['Planning', 'bg-yellow-100 text-yellow-700'],
-            'progress' => ['Progress', 'bg-blue-100 text-blue-700'],
-            'done'     => ['Done',     'bg-green-100 text-green-700'],
-            'cancel'   => ['Cancel',   'bg-red-100 text-red-700'],
+            'planning' => ['Direncanakan', 'bg-yellow-100 text-yellow-700'],
+            'progress' => ['Berjalan', 'bg-blue-100 text-blue-700'],
+            'done'     => ['Selesai',     'bg-green-100 text-green-700'],
+            'cancel'   => ['Dibatalkan',   'bg-red-100 text-red-700'],
         ];
         $userStatuses = ['planning', 'progress', 'done'];
         $details = [
-            'project_name'         => ['label' => 'Project Name', 'span' => true],
-            'end_user'             => ['label' => 'End User'],
+            'project_name'         => ['label' => 'Nama proyek', 'span' => true],
+            'end_user'             => ['label' => 'Pelanggan'],
             'pic'                  => ['label' => 'PIC'],
-            'po_number'            => ['label' => 'PO Number'],
-            'quotation_number'     => ['label' => 'Quotation Number'],
-            'deadline_date'        => ['label' => 'Deadline'],
+            'po_number'            => ['label' => 'Nomor PO'],
+            'quotation_number'     => ['label' => 'Nomor penawaran'],
+            'deadline_date'        => ['label' => 'Tenggat'],
             'status'               => ['label' => 'Status'],
         ];
         $endUserFields = [
-            'nama' => 'End User',
+            'nama' => 'Nama pelanggan',
             'industri' => 'Industri',
-            'contact' => 'Contact Person',
+            'contact' => 'Narahubung',
             'telepon' => 'Telepon',
             'email' => 'Email',
             'kota' => 'Kota',
@@ -34,12 +34,12 @@
         {{-- HEADER --}}
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-                <p class="workspace-kicker">Workspace saya</p>
-                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Project Saya</h2>
+                <p class="workspace-kicker">Ruang kerja saya</p>
+                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Proyek Saya</h2>
                 <p class="mt-2 text-sm text-slate-500">Pantau detail project dan lanjutkan progres pekerjaanmu.</p>
             </div>
             <div class="inline-flex w-fit items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-700">
-                <span class="h-2 w-2 rounded-full bg-indigo-500"></span> {{ $totalProject }} project ditugaskan
+                <span class="h-2 w-2 rounded-full bg-indigo-500"></span> {{ $totalProject }} proyek ditugaskan
             </div>
         </div>
 
@@ -53,8 +53,8 @@
         {{-- SUMMARY --}}
         <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6">
             @foreach ([
-                ['Total Project', $totalProject, 'text-slate-900', 'bg-slate-50'],
-                ['Project Aktif',   $active,     'text-blue-600',  'bg-blue-50'],
+                ['Total proyek', $totalProject, 'text-slate-900', 'bg-slate-50'],
+                ['Proyek aktif',   $active,     'text-blue-600',  'bg-blue-50'],
                 ['Selesai',       $done,         'text-green-600', 'bg-green-50'],
             ] as [$title, $count, $color, $bg])
                 <div class="workspace-stat {{ $bg }}">
@@ -69,7 +69,7 @@
             <form method="GET" action="{{ route('user.projects.index') }}" data-live-filter data-results-target="#projectResults" class="flex flex-col gap-3 border-b border-slate-100 bg-white p-4 sm:flex-row sm:items-center sm:p-5">
                 <div class="relative min-w-0 flex-1">
                     <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m16.5 16.5 4 4"/></svg>
-                    <input name="q" type="search" value="{{ $filters['q'] ?? '' }}" placeholder="Cari project atau End User..." class="workspace-input pl-10">
+                    <input name="q" type="search" value="{{ $filters['q'] ?? '' }}" placeholder="Cari proyek atau pelanggan..." class="workspace-input pl-10">
                 </div>
                 <select name="status" class="workspace-input sm:max-w-xs">
                     <option value="">Semua status</option>
@@ -88,11 +88,11 @@
                     <thead class="bg-slate-50 text-xs uppercase text-slate-500">
                         <tr>
                             <th class="px-6 py-3 font-semibold">No</th>
-                            <th class="px-6 py-3 font-semibold">End User</th>
-                            <th class="px-6 py-3 font-semibold">Project Name</th>
-                            <th class="px-6 py-3 font-semibold">Deadline</th>
+                            <th class="px-6 py-3 font-semibold">Pelanggan</th>
+                            <th class="px-6 py-3 font-semibold">Nama proyek</th>
+                            <th class="px-6 py-3 font-semibold">Tenggat</th>
                             <th class="px-6 py-3 font-semibold">Status</th>
-                            <th class="px-6 py-3 text-right font-semibold">Action</th>
+                            <th class="px-6 py-3 text-right font-semibold">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="projectTable" class="divide-y divide-slate-100">
@@ -152,7 +152,7 @@
                                 <td class="whitespace-nowrap px-6 py-4 {{ $overdue ? 'font-semibold text-red-600' : 'text-slate-700' }}">
                                     {{ $formatDate($deadline) ?? '-' }}
                                     @if ($overdue)
-                                        <span class="ml-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">Overdue</span>
+                                        <span class="ml-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">Terlambat</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">
@@ -164,12 +164,12 @@
                                         @if ($project->status !== 'cancel')
                                             <button type="button" onclick="openProgress(this)"
                                                 class="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700">
-                                                Update Status
+                                                Perbarui status
                                             </button>
                                         @else
                                             <button type="button" disabled
                                                 class="cursor-not-allowed rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-400">
-                                                Update Status
+                                                Perbarui status
                                             </button>
                                         @endif
                                     </div>
@@ -177,7 +177,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-10 text-center text-slate-500">Belum ada project yang ditugaskan.</td>
+                                <td colspan="6" class="px-6 py-10 text-center text-slate-500">Belum ada proyek yang ditugaskan.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -239,11 +239,11 @@
                                 <span class="font-medium text-slate-900">{{ $project->pic?->nama ?? '-' }}</span>
                             </div>
                             <div class="flex justify-between {{ $overdue ? 'text-red-600' : '' }}">
-                                <span class="text-slate-500">Deadline:</span>
+                                <span class="text-slate-500">Tenggat:</span>
                                 <span class="font-medium">
                                     {{ $formatDate($deadline) ?? '-' }}
                                     @if ($overdue)
-                                        <span class="ml-1">(Overdue)</span>
+                                        <span class="ml-1">(Terlambat)</span>
                                     @endif
                                 </span>
                             </div>
@@ -258,19 +258,19 @@
                             @if ($project->status !== 'cancel')
                                 <button type="button" onclick="openProgress(this)"
                                     class="flex-1 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">
-                                    Update Status
+                                    Perbarui status
                                 </button>
                             @else
                                 <button type="button" disabled
                                     class="flex-1 cursor-not-allowed rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-400">
-                                    Update Status
+                                    Perbarui status
                                 </button>
                             @endif
                         </div>
                     </div>
                 @empty
                     <div class="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center text-slate-500">
-                        <p class="font-medium">Belum ada project</p>
+                        <p class="font-medium">Belum ada proyek</p>
                         <p class="mt-1 text-sm">Tunggu admin untuk menugaskan project ke kamu</p>
                     </div>
                 @endforelse
@@ -299,7 +299,7 @@
                     </div>
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-600">Ringkasan</p>
-                        <h3 id="projectDetailTitle" class="mt-1 text-xl font-bold tracking-tight text-slate-900">Detail Project</h3>
+                        <h3 id="projectDetailTitle" class="mt-1 text-xl font-bold tracking-tight text-slate-900">Detail proyek</h3>
                         <p class="mt-1 text-sm text-slate-500">Informasi lengkap project yang dipilih.</p>
                     </div>
                 </div>
@@ -324,7 +324,7 @@
                 <ol data-status-history class="mt-3 space-y-3"></ol>
             </section>
             <section class="border-t border-slate-100 px-6 py-5 sm:px-8">
-                <h4 class="text-sm font-semibold text-slate-900">Perubahan Detail Project</h4>
+                <h4 class="text-sm font-semibold text-slate-900">Perubahan detail proyek</h4>
                 <ol data-project-activities class="mt-3 space-y-3"></ol>
             </section>
             <div class="flex justify-end border-t border-slate-100 px-6 py-4 sm:px-8">
@@ -342,10 +342,10 @@
             <div class="sticky top-0 z-10 flex items-start justify-between border-b border-slate-100 bg-white/95 px-6 py-5 backdrop-blur sm:px-8">
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-600">Informasi Kontak</p>
-                    <h3 id="endUserDetailTitle" class="mt-1 text-xl font-bold tracking-tight text-slate-900">Detail End User</h3>
-                    <p class="mt-1 text-sm text-slate-500">Informasi End User dari project yang ditugaskan ke kamu.</p>
+                    <h3 id="endUserDetailTitle" class="mt-1 text-xl font-bold tracking-tight text-slate-900">Detail pelanggan</h3>
+                    <p class="mt-1 text-sm text-slate-500">Informasi pelanggan dari proyek yang ditugaskan kepadamu.</p>
                 </div>
-                <button type="button" onclick="closeModal('endUserDetailModal')" aria-label="Tutup detail End User" class="rounded-xl p-2 text-2xl leading-none text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">&times;</button>
+                <button type="button" onclick="closeModal('endUserDetailModal')" aria-label="Tutup detail pelanggan" class="rounded-xl p-2 text-2xl leading-none text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">&times;</button>
             </div>
             <dl class="grid grid-cols-1 gap-3 bg-slate-50/70 px-6 py-6 sm:grid-cols-2 sm:gap-4 sm:px-8">
                 @foreach ($endUserFields as $key => $label)
@@ -370,7 +370,7 @@
         class="modal fixed inset-0 z-50 {{ $formType === 'progress' ? 'flex' : 'hidden' }} items-center justify-center bg-slate-900/50 p-4">
         <div class="w-full max-w-md rounded-2xl bg-white shadow-xl">
             <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-                <h3 class="text-lg font-semibold text-slate-900">Update Status Project</h3>
+                        <h3 class="text-lg font-semibold text-slate-900">Perbarui status proyek</h3>
                 <button type="button" onclick="closeModal('progressModal')" class="text-2xl leading-none text-slate-400 hover:text-slate-600">&times;</button>
             </div>
             <form id="progressForm" method="POST"
@@ -382,7 +382,7 @@
                 <div class="px-6 py-5 space-y-4">
                     <div>
                         <p id="progress_project" class="text-sm font-medium text-slate-900">-</p>
-                        <p class="text-xs text-slate-500">Project</p>
+                        <p class="text-xs text-slate-500">Proyek</p>
                     </div>
                     <div>
                         <label for="progress_status" class="mb-1.5 block text-sm font-medium text-slate-700">
@@ -422,11 +422,15 @@
 
         function closeModal(id) {
             const modal = document.getElementById(id);
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            if (!document.querySelector('.modal.flex')) {
-                document.body.classList.remove('overflow-hidden');
-            }
+            if (!modal || modal.classList.contains('hidden')) return;
+
+            window.closeModalAnimated(modal, () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                if (!document.querySelector('.modal.flex')) {
+                    document.body.classList.remove('overflow-hidden');
+                }
+            });
         }
 
         function rowData(btn) {
@@ -462,7 +466,7 @@
                 entry.className = 'rounded-xl border border-slate-200 bg-slate-50 px-4 py-3';
                 const change = document.createElement('p');
                 change.className = 'text-sm font-medium text-slate-800';
-                change.textContent = item.from ? `${item.from} → ${item.to}` : `Project dibuat dengan status ${item.to}`;
+                change.textContent = item.from ? `${item.from} → ${item.to}` : `Proyek dibuat dengan status ${item.to}`;
                 const meta = document.createElement('p');
                 meta.className = 'mt-1 text-xs text-slate-500';
                 meta.textContent = `${item.actor} · ${item.date}`;
@@ -478,7 +482,7 @@
             if (!activities.length) {
                 const empty = document.createElement('li');
                 empty.className = 'text-sm text-slate-500';
-                empty.textContent = 'Belum ada perubahan detail project.';
+                empty.textContent = 'Belum ada perubahan detail proyek.';
                 list.append(empty);
                 return;
             }

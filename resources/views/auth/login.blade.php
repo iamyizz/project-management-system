@@ -36,7 +36,7 @@
                 <div class="mt-10 hidden max-w-md rounded-2xl border border-white/10 bg-white/[0.06] p-5 shadow-2xl shadow-black/10 backdrop-blur sm:block">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-xs font-medium text-slate-300">Workspace</p>
+                            <p class="text-xs font-medium text-slate-300">Ruang kerja</p>
                             <p class="mt-1 text-sm font-semibold">Ringkasan aktivitas project</p>
                         </div>
                         <span class="rounded-lg bg-emerald-400/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-300">Live overview</span>

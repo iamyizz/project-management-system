@@ -13,7 +13,12 @@ liveFilterForms.forEach((form) => {
     const updateFormFromUrl = (url) => {
         const params = new URL(url).searchParams;
 
-        form.querySelectorAll('[name]').forEach((field) => {
+        const fields = [
+            ...form.querySelectorAll('[name]'),
+            ...document.querySelectorAll(`[form="${form.id}"][name]`),
+        ];
+
+        fields.forEach((field) => {
             if (field.type !== 'submit' && field.type !== 'button') {
                 field.value = params.get(field.name) ?? '';
             }
@@ -24,7 +29,7 @@ liveFilterForms.forEach((form) => {
         });
     };
 
-    const loadResults = async (url, syncForm = true) => {
+    const loadResults = async (url, syncForm = true, scrollToTable = false) => {
         activeRequest?.abort();
         activeRequest = new AbortController();
         const currentVersion = ++requestVersion;
@@ -53,7 +58,16 @@ liveFilterForms.forEach((form) => {
             results = updatedResults;
             history.replaceState({}, '', response.url);
 
+            document.querySelectorAll('[data-report-export]').forEach((link) => {
+                const exportUrl = new URL(link.href, window.location.href);
+                exportUrl.search = new URL(response.url).search;
+                link.href = exportUrl;
+            });
+
             if (syncForm) updateFormFromUrl(response.url);
+            if (scrollToTable) {
+                updatedResults.querySelector('[data-report-table]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
             if (status) status.textContent = 'Hasil filter diperbarui';
         } catch (error) {
             if (error.name !== 'AbortError' && currentVersion === requestVersion) {
@@ -102,6 +116,42 @@ liveFilterForms.forEach((form) => {
     });
 
     form.addEventListener('click', (event) => {
+        const rangePreset = event.target.closest('[data-range-preset]');
+        if (rangePreset) {
+            const now = new Date();
+            let start;
+            let end;
+
+            if (rangePreset.dataset.rangePreset === 'month') {
+                start = new Date(now.getFullYear(), now.getMonth(), 1);
+                end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            } else if (rangePreset.dataset.rangePreset === 'quarter') {
+                const firstQuarterMonth = Math.floor(now.getMonth() / 3) * 3;
+                start = new Date(now.getFullYear(), firstQuarterMonth, 1);
+                end = new Date(now.getFullYear(), firstQuarterMonth + 3, 0);
+            } else {
+                start = new Date(now.getFullYear(), 0, 1);
+                end = new Date(now.getFullYear(), 11, 31);
+            }
+
+            const toDateValue = (date) => {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            };
+
+            const dateFrom = form.querySelector('[name="date_from"]');
+            const dateTo = form.querySelector('[name="date_to"]');
+            dateFrom._flatpickr?.setDate(toDateValue(start), false);
+            dateTo._flatpickr?.setDate(toDateValue(end), false);
+            if (!dateFrom._flatpickr) dateFrom.value = toDateValue(start);
+            if (!dateTo._flatpickr) dateTo.value = toDateValue(end);
+
+            loadResults(urlFromForm());
+            return;
+        }
+
         const resetLink = event.target.closest('[data-filter-reset]');
         if (!resetLink) return;
 
@@ -111,10 +161,26 @@ liveFilterForms.forEach((form) => {
     });
 
     document.addEventListener('click', (event) => {
+        const deadlineCard = event.target.closest(`${resultsSelector} [data-deadline-scope]`);
+        if (deadlineCard) {
+            const scopeInput = form.querySelector('[name="deadline_scope"]');
+            const selectedScope = deadlineCard.dataset.deadlineScope;
+            scopeInput.value = scopeInput.value === selectedScope ? '' : selectedScope;
+            loadResults(urlFromForm(), true, true);
+            return;
+        }
+
         const pageLink = event.target.closest(`${resultsSelector} nav[role="navigation"] a[href]`);
         if (!pageLink) return;
 
         event.preventDefault();
         loadResults(new URL(pageLink.href, window.location.href));
+    });
+
+    document.addEventListener('input', (event) => {
+        if (event.target.form === form && event.target.matches('input[type="search"], input[type="text"]') && !form.contains(event.target)) {
+            window.clearTimeout(debounceTimer);
+            debounceTimer = window.setTimeout(() => loadResults(urlFromForm()), 250);
+        }
     });
 });

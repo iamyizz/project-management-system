@@ -11,10 +11,10 @@ class RoleMiddleware
     /**
      * Handle an incoming request.
      */
-    public function handle(Request $request, Closure $next, ...$roles): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         if (! auth()->check()) {
-            abort(403);
+            return redirect()->guest(route('login'));
         }
 
         if (! auth()->user()->is_active) {

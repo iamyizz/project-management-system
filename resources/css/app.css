@@ -2,6 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes modal-backdrop-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modal-panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal:not(.hidden):not([x-data]) {
+    animation: modal-backdrop-in 140ms ease-out both;
+}
+
+.modal:not(.hidden) {
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+
+.modal:not(.hidden):not([x-data]) > :first-child {
+    animation: modal-panel-in 160ms cubic-bezier(0.2, 0.75, 0.3, 1) both;
+}
+
+.modal.modal-closing,
+.modal.modal-closing > :first-child {
+    animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .modal:not(.hidden):not([x-data]),
+    .modal:not(.hidden):not([x-data]) > :first-child {
+        animation-duration: 1ms;
+    }
+}
+
 @media print {
     #sidebar,
     #overlay,
@@ -33,6 +80,10 @@
 }
 
 @layer base {
+    html {
+        scrollbar-gutter: stable;
+    }
+
     body {
         @apply antialiased;
     }

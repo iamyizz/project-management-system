@@ -33,13 +33,13 @@
                 <div class="max-w-xl">
                     <div class="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/80 px-3 py-1.5 text-xs font-semibold text-indigo-700 shadow-sm">
                         <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                        Workspace internal NTU
+                        Ruang kerja internal NTU
                     </div>
                     <h1 class="mt-6 text-4xl font-semibold leading-[1.1] tracking-tight text-slate-950 sm:text-5xl lg:text-[3.65rem]">Project lebih tertata, progres lebih terlihat.</h1>
                     <p class="mt-6 max-w-lg text-base leading-7 text-slate-600">Kelola project, pantau deadline, dan lihat ringkasan pekerjaan tim dalam satu workspace yang mudah digunakan.</p>
                     <div class="mt-8 flex flex-wrap items-center gap-4">
                         <a href="{{ route('login') }}" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/20 transition hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500/25">
-                            Masuk ke Workspace
+                            Masuk ke ruang kerja
                             <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.69L10.22 5.03a.75.75 0 111.06-1.06l5.5 5.5a.75.75 0 010 1.06l-5.5 5.5a.75.75 0 11-1.06-1.06l4.22-4.22H3.75A.75.75 0 013 10z" clip-rule="evenodd" /></svg>
                         </a>
                         <span class="text-xs text-slate-500">Akses khusus pengguna terdaftar</span>
@@ -61,7 +61,7 @@
                                 </span>
                                 <div><p class="text-sm font-semibold text-slate-900">Project Overview</p><p class="mt-0.5 text-xs text-slate-500">Kelola aktivitas workspace</p></div>
                             </div>
-                            <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">Workspace</span>
+                            <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">Ruang kerja</span>
                         </div>
 
                         <div class="grid grid-cols-3 gap-3 p-4 sm:gap-4 sm:p-6">
@@ -80,7 +80,7 @@
                                 </div>
                             </div>
                             <div class="mt-4 flex flex-wrap gap-2">
-                                <span class="rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-medium text-slate-600">End User</span>
+                                <span class="rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-medium text-slate-600">Pelanggan</span>
                                 <span class="rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-medium text-slate-600">Laporan</span>
                             </div>
                         </div>

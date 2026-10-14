@@ -1,4 +1,4 @@
-<x-admin-layout title="Manage Users">
+<x-admin-layout title="Kelola Pengguna">
     @php
         $input = 'w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20';
         $label = 'mb-1.5 block text-sm font-medium text-slate-700';
@@ -14,7 +14,7 @@
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
                 <p class="workspace-kicker">Tim dan akses</p>
-                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">User Management</h2>
+                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Manajemen Pengguna</h2>
                 <p class="mt-2 text-sm text-slate-500">Atur akun, peran, dan status akses anggota workspace.</p>
             </div>
             <button type="button" onclick="openModal('createModal')"
@@ -22,7 +22,7 @@
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                Tambah User
+                Tambah pengguna
             </button>
         </div>
 
@@ -57,8 +57,8 @@
                 <table class="workspace-table w-full text-left text-sm">
                     <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
                         <tr>
-                            <th class="px-6 py-3 font-semibold">User</th>
-                            <th class="px-6 py-3 font-semibold">Role</th>
+                            <th class="px-6 py-3 font-semibold">Pengguna</th>
+                            <th class="px-6 py-3 font-semibold">Peran</th>
                             <th class="px-6 py-3 font-semibold">Status</th>
                             <th class="px-6 py-3 text-right font-semibold">Aksi</th>
                         </tr>
@@ -79,7 +79,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="rounded-full px-2.5 py-1 text-xs font-semibold {{ $user->role === 'admin' ? 'bg-violet-50 text-violet-700' : 'bg-slate-100 text-slate-700' }}">
-                                        {{ ucfirst($user->role) }}
+                                        {{ $user->role === 'admin' ? 'Administrator' : 'Pengguna' }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4">
@@ -107,7 +107,7 @@
                                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
                                         </svg>
-                                        Edit
+                                        Ubah
                                     </button>
                                 </td>
                             </tr>
@@ -140,7 +140,7 @@
                         {{-- Role & Status --}}
                         <div class="mb-4 flex flex-wrap gap-2">
                             <span class="rounded-full px-2.5 py-1 text-xs font-semibold {{ $user->role === 'admin' ? 'bg-violet-50 text-violet-700' : 'bg-slate-100 text-slate-700' }}">
-                                {{ ucfirst($user->role) }}
+                                {{ $user->role === 'admin' ? 'Administrator' : 'Pengguna' }}
                             </span>
                             @if ($user->is_active)
                                 <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
@@ -167,13 +167,13 @@
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
                             </svg>
-                            Edit User
+                            Ubah pengguna
                         </button>
                     </div>
                 @empty
                     <div class="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center text-slate-500">
                         <p class="font-medium">Belum ada user</p>
-                        <p class="mt-1 text-sm">Klik tombol "Tambah User" untuk menambahkan user baru</p>
+                            <p class="mt-1 text-sm">Klik tombol "Tambah pengguna" untuk menambahkan pengguna baru</p>
                     </div>
                 @endforelse
             </div>
@@ -185,10 +185,10 @@
     </div>
 
     {{-- ================= MODAL TAMBAH ================= --}}
-    <div id="createModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4" onclick="if (event.target === this) closeModal('createModal')">
+    <div id="createModal" class="modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4" onclick="if (event.target === this) closeModal('createModal')">
         <div class="w-full max-w-lg rounded-2xl bg-white shadow-xl">
             <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-                <h3 class="text-lg font-semibold text-slate-900">Tambah User</h3>
+                <h3 class="text-lg font-semibold text-slate-900">Tambah pengguna</h3>
                 <button type="button" onclick="closeModal('createModal')" class="text-2xl leading-none text-slate-400 hover:text-slate-600">&times;</button>
             </div>
 
@@ -220,8 +220,8 @@
                     <div>
                         <label class="{{ $label }}">Role</label>
                         <select name="role" class="{{ $input }}">
-                            <option value="user" @selected($formType === 'create' && old('role') === 'user')>User</option>
-                            <option value="admin" @selected($formType === 'create' && old('role') === 'admin')>Admin</option>
+                            <option value="user" @selected($formType === 'create' && old('role') === 'user')>Pengguna</option>
+                            <option value="admin" @selected($formType === 'create' && old('role') === 'admin')>Administrator</option>
                         </select>
                     </div>
                 </div>
@@ -235,10 +235,10 @@
     </div>
 
     {{-- ================= MODAL EDIT ================= --}}
-    <div id="editModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4" onclick="if (event.target === this) closeModal('editModal')">
+    <div id="editModal" class="modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4" onclick="if (event.target === this) closeModal('editModal')">
         <div class="w-full max-w-lg rounded-2xl bg-white shadow-xl">
             <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-                <h3 class="text-lg font-semibold text-slate-900">Edit User</h3>
+                <h3 class="text-lg font-semibold text-slate-900">Ubah pengguna</h3>
                 <button type="button" onclick="closeModal('editModal')" class="text-2xl leading-none text-slate-400 hover:text-slate-600">&times;</button>
             </div>
 
@@ -268,10 +268,10 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="{{ $label }}">Role</label>
+                            <label class="{{ $label }}">Peran</label>
                             <select name="role" id="edit_role" class="{{ $input }}">
-                                <option value="user" @selected($formType === 'edit' && old('role') === 'user')>User</option>
-                                <option value="admin" @selected($formType === 'edit' && old('role') === 'admin')>Admin</option>
+                                <option value="user" @selected($formType === 'edit' && old('role') === 'user')>Pengguna</option>
+                                <option value="admin" @selected($formType === 'edit' && old('role') === 'admin')>Administrator</option>
                             </select>
                         </div>
                         <div>
@@ -286,19 +286,19 @@
 
                 <div class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
                     <button type="button" onclick="closeModal('editModal')" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100">Batal</button>
-                    <button type="submit" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">Update</button>
+                    <button type="submit" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">Simpan perubahan</button>
                 </div>
             </form>
 
             <form id="passwordResetForm" method="POST" action="{{ $editingUser ? route('admin.users.password-reset-link', $editingUser) : '#' }}" class="flex flex-col gap-3 rounded-b-2xl border-t border-slate-200 bg-slate-50 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
                 @csrf
                 <div>
-                    <p class="text-sm font-semibold text-slate-800">Reset password</p>
-                    <p class="mt-0.5 text-xs text-slate-500">Kirim tautan pengaturan password ke <span id="passwordResetEmail" class="font-medium text-slate-700">{{ $editingUser?->email }}</span>.</p>
+                    <p class="text-sm font-semibold text-slate-800">Atur ulang kata sandi</p>
+                    <p class="mt-0.5 text-xs text-slate-500">Kirim tautan pengaturan kata sandi ke <span id="passwordResetEmail" class="font-medium text-slate-700">{{ $editingUser?->email }}</span>.</p>
                 </div>
                 <button type="submit" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-indigo-200 bg-white px-3.5 py-2 text-sm font-semibold text-indigo-700 transition hover:border-indigo-300 hover:bg-indigo-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500/15">
                     <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v5.25h-5.25M20.1 15.75a8.25 8.25 0 1 1 .2-7.3l1.45 3.55"/></svg>
-                    Kirim link reset
+                    Kirim tautan
                 </button>
             </form>
         </div>
@@ -314,9 +314,15 @@
 
         function closeModal(id) {
             const m = document.getElementById(id);
-            m.classList.add('hidden');
-            m.classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
+            if (!m || m.classList.contains('hidden')) return;
+
+            window.closeModalAnimated(m, () => {
+                m.classList.add('hidden');
+                m.classList.remove('flex');
+                if (!document.querySelector('.modal.flex')) {
+                    document.body.classList.remove('overflow-hidden');
+                }
+            });
         }
 
         function openEdit(btn) {
