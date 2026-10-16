@@ -14,6 +14,7 @@ class DashboardController extends Controller
         if (auth()->user()->role === 'admin') {
             $totalUsers = User::count();
             $totalProjects = Project::count();
+            $totalOpportunities = Project::where('status', 'planning')->count();
             $ongoingTasks = Project::where('status', 'progress')->count();
             $doneTasks = Project::where('status', 'done')->count();
 
@@ -26,6 +27,7 @@ class DashboardController extends Controller
             return view('dashboard.admin', compact(
                 'totalUsers',
                 'totalProjects',
+                'totalOpportunities',
                 'ongoingTasks',
                 'doneTasks',
                 'recentProjects'

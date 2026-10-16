@@ -1,21 +1,21 @@
-<x-admin-layout title="Pelanggan">
+<x-admin-layout :title="__('Pelanggan')">
 @php
     $input        = 'w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20';
     $label        = 'mb-1.5 block text-sm font-medium text-slate-700';
-    $btnPrimary   = 'inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700';
-    $btnSecondary = 'rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100';
-    $btnSmall     = 'rounded-lg border px-3 py-1.5 text-sm font-medium transition';
+    $btnPrimary   = 'action-btn action-btn--primary px-4 py-2.5 text-sm font-semibold';
+    $btnSecondary = 'action-btn action-btn--secondary px-4 py-2.5 text-sm';
+    $btnSmall     = 'action-btn text-sm';
 
     $formType = old('form_type');
 
     $fields = [
-        'nama'     => ['label' => 'Nama',     'type' => 'text',  'required' => true],
-        'industri' => ['label' => 'Industri', 'type' => 'text'],
-        'contact'  => ['label' => 'Narahubung',  'type' => 'text'],
-        'telepon'  => ['label' => 'Telepon',  'type' => 'tel'],
-        'email'    => ['label' => 'Email',    'type' => 'email'],
-        'kota'     => ['label' => 'Kota',     'type' => 'text'],
-        'npwp'     => ['label' => 'NPWP',     'type' => 'text'],
+        'nama'     => ['label' => __('Nama'), 'type' => 'text', 'required' => true],
+        'industri' => ['label' => __('Industri'), 'type' => 'text'],
+        'contact'  => ['label' => __('Narahubung'), 'type' => 'text'],
+        'telepon'  => ['label' => __('Telepon'), 'type' => 'tel'],
+        'email'    => ['label' => __('Email'), 'type' => 'email'],
+        'kota'     => ['label' => __('Kota'), 'type' => 'text'],
+        'npwp'     => ['label' => __('NPWP'), 'type' => 'text'],
     ];
 
     $total = method_exists($endUsers, 'total') ? $endUsers->total() : $endUsers->count();
@@ -26,16 +26,16 @@
     {{-- Header --}}
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-            <p class="workspace-kicker">Relasi bisnis</p>
-            <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Manajemen Pelanggan</h2>
-            <p class="mt-2 text-sm text-slate-500">Simpan informasi pelanggan dan narahubung yang terhubung ke proyek.</p>
+            <p class="workspace-kicker">{{ __('Relasi bisnis') }}</p>
+            <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">{{ __('Manajemen Pelanggan') }}</h2>
+            <p class="mt-2 text-sm text-slate-500">{{ __('Simpan informasi pelanggan dan narahubung yang terhubung ke proyek.') }}</p>
         </div>
 
         <button type="button" onclick="openModal('createModal')" class="{{ $btnPrimary }}">
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/>
             </svg>
-            Tambah pelanggan
+            {{ __('Tambah pelanggan') }}
         </button>
     </div>
 
@@ -55,7 +55,7 @@
         <div class="flex flex-col gap-3 border-b border-slate-100 bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
             <div class="relative w-full sm:max-w-md">
                 <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m16.5 16.5 4 4"/></svg>
-                <input type="search" id="search" placeholder="Cari nama, industri, atau kota..." class="workspace-input pl-10">
+                <input type="search" id="search" placeholder="{{ __('Cari nama, industri, atau kota...') }}" class="workspace-input pl-10">
             </div>
             <span class="text-xs font-medium text-slate-500">{{ $total }} customer terdaftar</span>
         </div>
@@ -65,11 +65,11 @@
             <table class="workspace-table w-full text-left text-sm">
                 <thead class="bg-slate-50 text-xs uppercase text-slate-500">
                     <tr>
-                        <th class="px-6 py-3 font-semibold">Nama</th>
-                        <th class="px-6 py-3 font-semibold">Industri</th>
-                        <th class="px-6 py-3 font-semibold">Narahubung</th>
-                        <th class="px-6 py-3 font-semibold">Kota</th>
-                        <th class="px-6 py-3 text-right font-semibold">Aksi</th>
+                        <th class="px-6 py-3 font-semibold">{{ __('Nama') }}</th>
+                        <th class="px-6 py-3 font-semibold">{{ __('Industri') }}</th>
+                        <th class="px-6 py-3 font-semibold">{{ __('Narahubung') }}</th>
+                        <th class="px-6 py-3 font-semibold">{{ __('Kota') }}</th>
+                        <th class="px-6 py-3 text-right font-semibold">{{ __('Aksi') }}</th>
                     </tr>
                 </thead>
 
@@ -98,12 +98,12 @@
                             <td class="px-6 py-4">
                                 <div class="flex justify-end gap-2 whitespace-nowrap">
                                     <button type="button" onclick="openDetail(this)"
-                                        class="{{ $btnSmall }} border-indigo-200 text-indigo-700 hover:bg-indigo-50">
-                                        Detail
+                                        class="{{ $btnSmall }} action-btn--detail">
+                                        {{ __('Detail') }}
                                     </button>
                                     <button type="button" onclick="openEdit(this)"
-                                        class="{{ $btnSmall }} border-slate-200 text-slate-700 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
-                                        Edit
+                                        class="{{ $btnSmall }} action-btn--secondary">
+                                        {{ __('Edit') }}
                                     </button>
                                 </div>
                             </td>
@@ -168,12 +168,12 @@
                     {{-- Action Buttons --}}
                     <div class="flex gap-2">
                         <button type="button" onclick="openDetail(this)"
-                            class="flex-1 rounded-lg border border-indigo-300 bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-700 transition hover:bg-indigo-100">
-                            Detail
+                            class="action-btn action-btn--detail flex-1 px-3 py-2 text-sm">
+                            {{ __('Detail') }}
                         </button>
                         <button type="button" onclick="openEdit(this)"
-                            class="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
-                            Edit
+                            class="action-btn action-btn--secondary flex-1 px-3 py-2 text-sm">
+                            {{ __('Edit') }}
                         </button>
                     </div>
                 </div>
@@ -205,7 +205,7 @@
             <input type="hidden" name="form_type" value="create">
 
             <div class="border-b border-slate-200 px-6 py-4">
-                <h3 class="text-lg font-semibold text-slate-900">Tambah pelanggan</h3>
+                <h3 class="text-lg font-semibold text-slate-900">{{ __('Tambah pelanggan') }}</h3>
             </div>
 
             <div class="space-y-4 overflow-y-auto px-6 py-5">
@@ -235,8 +235,8 @@
             </div>
 
             <div class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
-                <button type="button" onclick="closeModal('createModal')" class="{{ $btnSecondary }}">Batal</button>
-                <button type="submit" class="{{ $btnPrimary }}">Simpan</button>
+                <button type="button" onclick="closeModal('createModal')" class="{{ $btnSecondary }}">{{ __('Batal') }}</button>
+                <button type="submit" class="{{ $btnPrimary }}">{{ __('Simpan') }}</button>
             </div>
         </form>
     </div>
@@ -264,7 +264,7 @@
         </div>
 
         <div class="flex justify-end border-t border-slate-100 bg-white px-6 py-4">
-            <button type="button" onclick="closeModal('detailModal')" class="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2">Tutup</button>
+            <button type="button" onclick="closeModal('detailModal')" class="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2">{{ __('Tutup') }}</button>
         </div>
     </div>
 </div>
@@ -313,8 +313,8 @@
             </div>
 
             <div class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
-                <button type="button" onclick="closeModal('editModal')" class="{{ $btnSecondary }}">Batal</button>
-                <button type="submit" class="{{ $btnPrimary }}">Simpan perubahan</button>
+                <button type="button" onclick="closeModal('editModal')" class="{{ $btnSecondary }}">{{ __('Batal') }}</button>
+                <button type="submit" class="{{ $btnPrimary }}">{{ __('Simpan perubahan') }}</button>
             </div>
         </form>
     </div>

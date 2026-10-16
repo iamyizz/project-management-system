@@ -80,18 +80,18 @@
                         {{-- Action Buttons --}}
                         <div class="flex gap-2">
                             <button type="button" onclick="openDetail(this)"
-                                class="flex-1 rounded-lg border border-indigo-300 bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-700 transition hover:bg-indigo-100">
+                                class="action-btn action-btn--detail flex-1 px-3 py-2 text-sm">
                                 Detail
                             </button>
                             <button type="button" onclick="openEdit(this)"
-                                class="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
+                                class="action-btn action-btn--secondary flex-1 px-3 py-2 text-sm">
                                 Ubah
                             </button>
                             <form method="POST" action="{{ route('admin.projects.destroy', $project) }}"
                                 class="flex-1" onsubmit="return confirm('Hapus proyek ini?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="w-full rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100">
+                                <button type="submit" class="action-btn action-btn--danger w-full px-3 py-2 text-sm">
                                     Hapus
                                 </button>
                             </form>

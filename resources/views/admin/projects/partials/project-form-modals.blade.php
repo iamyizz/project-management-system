@@ -1,5 +1,5 @@
     {{-- ================= MODAL CREATE & EDIT ================= --}}
-    @foreach (['create' => 'Tambah proyek', 'edit' => 'Ubah proyek'] as $mode => $title)
+    @foreach (['create' => __('Tambah proyek'), 'edit' => __('Ubah proyek')] as $mode => $title)
         <div id="{{ $mode }}Modal"
             class="modal fixed inset-0 z-50 {{ $formType === $mode ? 'flex' : 'hidden' }} items-center justify-center bg-slate-900/50 p-4">
             <div class="max-h-screen w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-xl">
@@ -38,7 +38,7 @@
                                 </label>
                                 @if ($type === 'select')
                                     <select id="{{ $id }}" name="{{ $name }}" class="{{ $input }}" @required($required) @if($readonly) disabled @endif>
-                                        <option value="">Pilih {{ $field['label'] }}</option>
+                                        <option value="">{{ __('Pilih :label', ['label' => $field['label']]) }}</option>
                                         @foreach ($field['options'] as $key => $text)
                                             <option value="{{ $key }}" @selected((string) $value === (string) $key)>{{ $text }}</option>
                                         @endforeach
@@ -81,11 +81,11 @@
                     <div class="flex justify-end gap-2 border-t border-slate-200 px-6 py-4">
                         <button type="button" onclick="closeModal('{{ $mode }}Modal')"
                             class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-                            Batal
+                            {{ __('Batal') }}
                         </button>
                         <button type="submit" data-form-submit
-                            class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
-                            Simpan
+                            class="action-btn action-btn--primary px-4 py-2 text-sm font-semibold">
+                            {{ __('Simpan') }}
                         </button>
                     </div>
                 </form>

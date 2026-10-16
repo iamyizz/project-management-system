@@ -3,13 +3,13 @@
                 <table class="workspace-table w-full text-left text-sm">
                     <thead class="bg-slate-50 text-xs uppercase text-slate-500">
                         <tr>
-                            <th class="px-6 py-3 font-semibold">No</th>
-                            <th class="px-6 py-3 font-semibold">Pelanggan</th>
-                            <th class="px-6 py-3 font-semibold">Nama proyek</th>
-                            <th class="px-6 py-3 font-semibold">PIC</th>
-                            <th class="px-6 py-3 font-semibold">Tenggat</th>
-                            <th class="px-6 py-3 font-semibold">Status</th>
-                            <th class="px-6 py-3 text-right font-semibold">Aksi</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('No') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('Pelanggan') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('Nama proyek') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('PIC') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('Tenggat') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('Status') }}</th>
+                            <th class="px-6 py-3 text-right font-semibold">{{ __('Aksi') }}</th>
                         </tr>
                     </thead>
                     <tbody id="projectTable" class="divide-y divide-slate-100">
@@ -70,30 +70,30 @@
                                 <td class="whitespace-nowrap px-6 py-4 {{ $overdue ? 'font-semibold text-red-600' : 'text-slate-700' }}">
                                     {{ $formatDate($deadline) ?? '-' }}
                                     @if ($overdue)
-                                        <span class="ml-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">Terlambat</span>
+                                        <span class="ml-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">{{ __('Terlambat') }}</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="rounded-full px-3 py-1 text-xs font-medium {{ $statusClass }}">
-                                        {{ $statusLabel }}
+                                        {{ __($statusLabel) }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex justify-end gap-2">
-                                        <button type="button" onclick="openDetail(this)" class="{{ $btnSmall }}">Detail</button>
-                                        <button type="button" onclick="openEdit(this)" class="{{ $btnSmall }}">Ubah</button>
+                                        <button type="button" onclick="openDetail(this)" class="action-btn action-btn--detail text-xs">{{ __('Detail') }}</button>
+                                        <button type="button" onclick="openEdit(this)" class="{{ $btnSmall }}">{{ __('Ubah') }}</button>
                                         <form method="POST" action="{{ route('admin.projects.destroy', $project) }}"
                                             class="inline" onsubmit="return confirm('Hapus proyek ini?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">Hapus</button>
+                                            <button type="submit" class="action-btn action-btn--danger text-xs">{{ __('Hapus') }}</button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-10 text-center text-slate-500">Belum ada proyek.</td>
+                                <td colspan="7" class="px-6 py-10 text-center text-slate-500">{{ __('Belum ada proyek.') }}</td>
                             </tr>
                         @endforelse
                     </tbody>

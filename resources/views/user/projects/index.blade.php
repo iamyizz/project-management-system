@@ -1,22 +1,22 @@
-<x-admin-layout title="Proyek Saya">
+<x-admin-layout :title="__('Proyek Saya')">
     @php
         $input    = 'w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20';
         $btnSmall = 'rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50';
         $statuses = [
-            'planning' => ['Direncanakan', 'bg-yellow-100 text-yellow-700'],
-            'progress' => ['Berjalan', 'bg-blue-100 text-blue-700'],
-            'done'     => ['Selesai',     'bg-green-100 text-green-700'],
-            'cancel'   => ['Dibatalkan',   'bg-red-100 text-red-700'],
+            'planning' => [__('Direncanakan'), 'bg-yellow-100 text-yellow-700'],
+            'progress' => [__('Berjalan'), 'bg-blue-100 text-blue-700'],
+            'done'     => [__('Selesai'), 'bg-green-100 text-green-700'],
+            'cancel'   => [__('Dibatalkan'), 'bg-red-100 text-red-700'],
         ];
         $userStatuses = ['planning', 'progress', 'done'];
         $details = [
-            'project_name'         => ['label' => 'Nama proyek', 'span' => true],
-            'end_user'             => ['label' => 'Pelanggan'],
-            'pic'                  => ['label' => 'PIC'],
-            'po_number'            => ['label' => 'Nomor PO'],
-            'quotation_number'     => ['label' => 'Nomor penawaran'],
-            'deadline_date'        => ['label' => 'Tenggat'],
-            'status'               => ['label' => 'Status'],
+            'project_name'         => ['label' => __('Nama proyek'), 'span' => true],
+            'end_user'             => ['label' => __('Pelanggan')],
+            'pic'                  => ['label' => __('PIC')],
+            'po_number'            => ['label' => __('Nomor PO')],
+            'quotation_number'     => ['label' => __('Nomor penawaran')],
+            'deadline_date'        => ['label' => __('Tenggat')],
+            'status'               => ['label' => __('Status')],
         ];
         $endUserFields = [
             'nama' => 'Nama pelanggan',
@@ -34,12 +34,12 @@
         {{-- HEADER --}}
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-                <p class="workspace-kicker">Ruang kerja saya</p>
-                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Proyek Saya</h2>
-                <p class="mt-2 text-sm text-slate-500">Pantau detail project dan lanjutkan progres pekerjaanmu.</p>
+                <p class="workspace-kicker">{{ __('Ruang kerja saya') }}</p>
+                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">{{ __('Proyek Saya') }}</h2>
+                <p class="mt-2 text-sm text-slate-500">{{ __('Pantau detail project dan lanjutkan progres pekerjaanmu.') }}</p>
             </div>
             <div class="inline-flex w-fit items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-700">
-                <span class="h-2 w-2 rounded-full bg-indigo-500"></span> {{ $totalProject }} proyek ditugaskan
+                <span class="h-2 w-2 rounded-full bg-indigo-500"></span> {{ __(':count proyek ditugaskan', ['count' => $totalProject]) }}
             </div>
         </div>
 
@@ -53,9 +53,9 @@
         {{-- SUMMARY --}}
         <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6">
             @foreach ([
-                ['Total proyek', $totalProject, 'text-slate-900', 'bg-slate-50'],
-                ['Proyek aktif',   $active,     'text-blue-600',  'bg-blue-50'],
-                ['Selesai',       $done,         'text-green-600', 'bg-green-50'],
+                [__('Total proyek'), $totalProject, 'text-slate-900', 'bg-slate-50'],
+                [__('Proyek aktif'), $active, 'text-blue-600', 'bg-blue-50'],
+                [__('Selesai'), $done, 'text-green-600', 'bg-green-50'],
             ] as [$title, $count, $color, $bg])
                 <div class="workspace-stat {{ $bg }}">
                     <p class="text-xs sm:text-sm text-slate-600">{{ $title }}</p>
@@ -69,16 +69,16 @@
             <form method="GET" action="{{ route('user.projects.index') }}" data-live-filter data-results-target="#projectResults" data-reset-status-on-scope class="flex flex-col gap-3 border-b border-slate-100 bg-white p-4 sm:flex-row sm:items-center sm:p-5">
                 <div class="relative min-w-0 flex-1">
                     <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m16.5 16.5 4 4"/></svg>
-                    <input name="q" type="search" value="{{ $filters['q'] ?? '' }}" placeholder="Cari proyek atau pelanggan..." class="workspace-input pl-10">
+                    <input name="q" type="search" value="{{ $filters['q'] ?? '' }}" placeholder="{{ __('Cari proyek atau pelanggan...') }}" class="workspace-input pl-10">
                 </div>
                 <select name="status" class="workspace-input sm:max-w-xs">
-                    <option value="">Semua status</option>
+                    <option value="">{{ __('Semua status') }}</option>
                     @foreach ($statuses as $value => [$statusLabel])
                         <option value="{{ $value }}" @selected(($filters['status'] ?? '') === $value)>{{ $statusLabel }}</option>
                     @endforeach
                 </select>
                 <input type="hidden" name="deadline_scope" value="{{ $filters['deadline_scope'] ?? '' }}">
-                <a href="{{ route('user.projects.index') }}" data-filter-reset class="shrink-0 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-center text-sm font-semibold text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">Reset</a>
+                <a href="{{ route('user.projects.index') }}" data-filter-reset class="shrink-0 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-center text-sm font-semibold text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">{{ __('Reset') }}</a>
             </form>
             <p data-filter-status role="status" aria-live="polite" class="sr-only"></p>
             <div id="projectResults" data-live-results aria-live="polite">
@@ -86,18 +86,18 @@
             <div class="border-b border-slate-100 bg-slate-50/60 px-4 py-4 sm:px-5">
                 <div class="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
                     <div>
-                        <p class="text-sm font-semibold text-slate-800">Filter cepat</p>
-                        <p class="mt-0.5 text-xs text-slate-500">Fokus ke proyek yang perlu dipantau atau ditindaklanjuti.</p>
+                        <p class="text-sm font-semibold text-slate-800">{{ __('Filter cepat') }}</p>
+                        <p class="mt-0.5 text-xs text-slate-500">{{ __('Fokus ke proyek yang perlu dipantau atau ditindaklanjuti.') }}</p>
                     </div>
                 </div>
                 <div class="mt-3 flex flex-wrap gap-2">
                     @foreach ([
-                        'all' => ['Semua proyek', $deadlineCounts['all']],
-                        'overdue' => ['Terlambat', $deadlineCounts['overdue']],
-                        'next_7' => ['Deadline 7 hari', $deadlineCounts['next_7']],
-                        'next_30' => ['Deadline 30 hari', $deadlineCounts['next_30']],
-                        'active' => ['Belum selesai', $deadlineCounts['active']],
-                        'done' => ['Selesai', $deadlineCounts['done']],
+                        'all' => [__('Semua proyek'), $deadlineCounts['all']],
+                        'overdue' => [__('Terlambat'), $deadlineCounts['overdue']],
+                        'next_7' => [__('Deadline 7 hari'), $deadlineCounts['next_7']],
+                        'next_30' => [__('Deadline 30 hari'), $deadlineCounts['next_30']],
+                        'active' => [__('Belum selesai'), $deadlineCounts['active']],
+                        'done' => [__('Selesai'), $deadlineCounts['done']],
                     ] as $scope => [$label, $count])
                         @php $isScopeActive = $scope === 'all' ? empty($filters['deadline_scope']) : ($filters['deadline_scope'] ?? '') === $scope; @endphp
                         <button type="button" data-deadline-scope="{{ $scope }}" aria-pressed="{{ $isScopeActive ? 'true' : 'false' }}" class="inline-flex min-h-10 items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition {{ $isScopeActive ? 'border-indigo-200 bg-indigo-50 text-indigo-700 ring-1 ring-indigo-100' : 'border-slate-200 bg-white text-slate-600 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700' }}">
@@ -113,12 +113,12 @@
                 <table class="workspace-table w-full text-left text-sm">
                     <thead class="bg-slate-50 text-xs uppercase text-slate-500">
                         <tr>
-                            <th class="px-6 py-3 font-semibold">No</th>
-                            <th class="px-6 py-3 font-semibold">Pelanggan</th>
-                            <th class="px-6 py-3 font-semibold">Nama proyek</th>
-                            <th class="px-6 py-3 font-semibold">Tenggat</th>
-                            <th class="px-6 py-3 font-semibold">Status</th>
-                            <th class="px-6 py-3 text-right font-semibold">Aksi</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('No') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('Pelanggan') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('Nama proyek') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('Tenggat') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('Status') }}</th>
+                            <th class="px-6 py-3 text-right font-semibold">{{ __('Aksi') }}</th>
                         </tr>
                     </thead>
                     <tbody id="projectTable" class="divide-y divide-slate-100">

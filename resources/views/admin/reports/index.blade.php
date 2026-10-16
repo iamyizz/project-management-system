@@ -1,10 +1,10 @@
-<x-admin-layout title="Laporan">
+<x-admin-layout :title="__('Laporan')">
     @php
         $statusLabels = [
-            'planning' => 'Direncanakan',
-            'progress' => 'Berjalan',
-            'done' => 'Selesai',
-            'cancel' => 'Dibatalkan',
+            'planning' => __('Direncanakan'),
+            'progress' => __('Berjalan'),
+            'done' => __('Selesai'),
+            'cancel' => __('Dibatalkan'),
         ];
         $money = fn ($value) => 'Rp ' . number_format((float) $value, 0, ',', '.');
         $input = 'w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20';
@@ -13,27 +13,27 @@
     <div class="space-y-7 sm:space-y-8">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-                <p class="workspace-kicker">Analitik operasional</p>
-                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Laporan Proyek</h2>
-                <p class="mt-2 text-sm text-slate-500">Pantau performa, nilai, margin, dan tenggat proyek.</p>
+                <p class="workspace-kicker">{{ __('Analitik operasional') }}</p>
+                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">{{ __('Laporan Proyek') }}</h2>
+                <p class="mt-2 text-sm text-slate-500">{{ __('Pantau performa, nilai, margin, dan tenggat proyek.') }}</p>
             </div>
             <div class="flex flex-wrap gap-2 print:hidden">
                 <a href="{{ route('admin.reports.export', request()->query()) }}" data-report-export class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700">
-                    <span aria-hidden="true">↓</span> Unduh CSV
+                    <span aria-hidden="true">↓</span> {{ __('Unduh CSV') }}
                 </a>
                 <a href="{{ route('admin.reports.index', [...request()->except('print'), 'print' => 1]) }}" class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
-                    Cetak / PDF
+                    {{ __('Cetak / PDF') }}
                 </a>
             </div>
         </div>
 
         <form id="reportFilters" method="GET" action="{{ route('admin.reports.index') }}" data-live-filter data-results-target="#reportResults" class="workspace-panel grid gap-3 p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-7">
-            <div class="col-span-full flex items-center gap-2 text-sm font-semibold text-slate-800"><span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">⌕</span> Filter laporan</div>
+            <div class="col-span-full flex items-center gap-2 text-sm font-semibold text-slate-800"><span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">⌕</span> {{ __('Filter laporan') }}</div>
             <input type="hidden" name="deadline_scope" value="{{ $filters['deadline_scope'] ?? '' }}">
             <label class="block min-w-0 text-xs font-semibold text-slate-600">
-                Status
+                {{ __('Status') }}
                 <select name="status" class="workspace-input mt-1.5 h-11">
-                    <option value="">Semua status</option>
+                    <option value="">{{ __('Semua status') }}</option>
                     @foreach ($statusLabels as $value => $label)
                         <option value="{{ $value }}" @selected(($filters['status'] ?? '') === $value)>{{ $label }}</option>
                     @endforeach
@@ -49,33 +49,33 @@
                 </select>
             </label>
             <label class="block min-w-0 text-xs font-semibold text-slate-600">
-                End user
+                {{ __('End user') }}
                 <select name="end_user_id" class="workspace-input mt-1.5 h-11">
-                    <option value="">Semua end user</option>
+                    <option value="">{{ __('Semua end user') }}</option>
                     @foreach ($endUsers as $endUser)
                         <option value="{{ $endUser->id }}" @selected((string) ($filters['end_user_id'] ?? '') === (string) $endUser->id)>{{ $endUser->nama }}</option>
                     @endforeach
                 </select>
             </label>
             @foreach ([
-                ['name' => 'date_from', 'label' => 'Tenggat mulai', 'aria' => 'Pilih tanggal tenggat mulai'],
-                ['name' => 'date_to', 'label' => 'Tenggat sampai', 'aria' => 'Pilih tanggal tenggat akhir'],
+                ['name' => 'date_from', 'label' => __('Tenggat mulai'), 'aria' => __('Pilih tanggal tenggat mulai')],
+                ['name' => 'date_to', 'label' => __('Tenggat sampai'), 'aria' => __('Pilih tanggal tenggat akhir')],
             ] as $dateFilter)
                 <label class="block min-w-0 text-xs font-semibold text-slate-600">
                     {{ $dateFilter['label'] }}
-                    <input type="text" name="{{ $dateFilter['name'] }}" value="{{ $filters[$dateFilter['name']] ?? '' }}" placeholder="Pilih tanggal" autocomplete="off" class="workspace-input mt-1.5 h-11" data-flatpickr aria-label="{{ $dateFilter['aria'] }}">
+                    <input type="text" name="{{ $dateFilter['name'] }}" value="{{ $filters[$dateFilter['name']] ?? '' }}" placeholder="{{ __('Pilih tanggal') }}" autocomplete="off" class="workspace-input mt-1.5 h-11" data-flatpickr aria-label="{{ $dateFilter['aria'] }}">
                 </label>
             @endforeach
             <div class="col-span-full flex flex-col gap-3 border-t border-slate-100 pt-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <span class="mb-2 block text-xs font-semibold text-slate-600">Periode cepat</span>
+                    <span class="mb-2 block text-xs font-semibold text-slate-600">{{ __('Periode cepat') }}</span>
                     <div class="flex flex-wrap gap-2">
-                        <button type="button" data-range-preset="month" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">Bulan ini</button>
-                        <button type="button" data-range-preset="quarter" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">Kuartal ini</button>
-                        <button type="button" data-range-preset="year" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">Tahun ini</button>
+                        <button type="button" data-range-preset="month" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">{{ __('Bulan ini') }}</button>
+                        <button type="button" data-range-preset="quarter" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">{{ __('Kuartal ini') }}</button>
+                        <button type="button" data-range-preset="year" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">{{ __('Tahun ini') }}</button>
                     </div>
                 </div>
-                <a href="{{ route('admin.reports.index') }}" data-filter-reset class="inline-flex justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">Atur ulang filter</a>
+                <a href="{{ route('admin.reports.index') }}" data-filter-reset class="inline-flex justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">{{ __('Atur ulang filter') }}</a>
             </div>
         </form>
         <p data-filter-status role="status" aria-live="polite" class="sr-only"></p>
@@ -83,11 +83,11 @@
         <div id="reportResults" data-live-results aria-live="polite" class="space-y-6">
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             @foreach ([
-                ['Total proyek', number_format((int) $summary->total_projects)],
-                ['Nilai proyek', $money($summary->total_value)],
-                ['Biaya internal', $money($summary->total_cost)],
-                ['Total margin', $money($summary->total_margin)],
-                ['Margin', number_format($marginPercentage, 1, ',', '.') . '%'],
+                [__('Total proyek'), number_format((int) $summary->total_projects)],
+                [__('Nilai proyek'), $money($summary->total_value)],
+                [__('Biaya internal'), $money($summary->total_cost)],
+                [__('Total margin'), $money($summary->total_margin)],
+                [__('Margin'), number_format($marginPercentage, 1, ',', '.') . '%'],
             ] as [$label, $value])
                 <div class="workspace-stat">
                     <p class="text-sm font-medium text-slate-500">{{ $label }}</p>
@@ -98,12 +98,12 @@
 
         <section class="grid gap-4 sm:grid-cols-2">
             <button type="button" data-deadline-scope="overdue" aria-pressed="{{ ($filters['deadline_scope'] ?? '') === 'overdue' ? 'true' : 'false' }}" class="group flex w-full items-center justify-between gap-4 rounded-2xl border border-rose-200 bg-rose-50 p-5 text-left transition hover:border-rose-300 hover:bg-rose-100 focus-visible:outline-rose-500 {{ ($filters['deadline_scope'] ?? '') === 'overdue' ? 'ring-2 ring-rose-300' : '' }}">
-                <div><p class="text-sm font-semibold text-rose-800">Proyek terlambat</p><p class="mt-1 text-xs text-rose-700">Tenggat terlewati, status belum selesai atau dibatalkan.</p></div>
-                <span class="flex items-center gap-2 text-3xl font-bold tabular-nums text-rose-800">{{ number_format($overdueCount) }}<span class="text-[11px] font-semibold text-rose-600 transition group-hover:translate-x-0.5">Lihat →</span></span>
+                <div><p class="text-sm font-semibold text-rose-800">{{ __('Proyek terlambat') }}</p><p class="mt-1 text-xs text-rose-700">{{ __('Tenggat terlewati, status belum selesai atau dibatalkan.') }}</p></div>
+                <span class="flex items-center gap-2 text-3xl font-bold tabular-nums text-rose-800">{{ number_format($overdueCount) }}<span class="text-[11px] font-semibold text-rose-600 transition group-hover:translate-x-0.5">{{ __('Lihat →') }}</span></span>
             </button>
             <button type="button" data-deadline-scope="upcoming" aria-pressed="{{ ($filters['deadline_scope'] ?? '') === 'upcoming' ? 'true' : 'false' }}" class="group flex w-full items-center justify-between gap-4 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-left transition hover:border-amber-300 hover:bg-amber-100 focus-visible:outline-amber-500 {{ ($filters['deadline_scope'] ?? '') === 'upcoming' ? 'ring-2 ring-amber-300' : '' }}">
-                <div><p class="text-sm font-semibold text-amber-800">Tenggat 30 hari ke depan</p><p class="mt-1 text-xs text-amber-700">Proyek aktif yang perlu dipantau.</p></div>
-                <span class="flex items-center gap-2 text-3xl font-bold tabular-nums text-amber-800">{{ number_format($upcomingCount) }}<span class="text-[11px] font-semibold text-amber-700 transition group-hover:translate-x-0.5">Lihat →</span></span>
+                <div><p class="text-sm font-semibold text-amber-800">{{ __('Tenggat 30 hari ke depan') }}</p><p class="mt-1 text-xs text-amber-700">{{ __('Proyek aktif yang perlu dipantau.') }}</p></div>
+                <span class="flex items-center gap-2 text-3xl font-bold tabular-nums text-amber-800">{{ number_format($upcomingCount) }}<span class="text-[11px] font-semibold text-amber-700 transition group-hover:translate-x-0.5">{{ __('Lihat →') }}</span></span>
             </button>
         </section>
 
@@ -115,11 +115,11 @@
         <div class="grid gap-4 lg:grid-cols-2">
             <section class="workspace-panel p-5 sm:p-6 workspace-stat">
                 <div class>
-                    <h3 class="font-semibold text-slate-900">Komposisi Status</h3>
-                    <p class="mt-1 text-xs text-slate-500">Sebaran status proyek yang sesuai filter.</p>
+                    <h3 class="font-semibold text-slate-900">{{ __('Komposisi Status') }}</h3>
+                    <p class="mt-1 text-xs text-slate-500">{{ __('Sebaran status proyek yang sesuai filter.') }}</p>
                 </div>
-                <div class="mt-5 flex flex-wrap items-center justify-center gap-6 sm:justify-start">
-                    <div class="report-status-chart relative h-36 w-36 shrink-0" role="img" aria-label="Diagram komposisi status proyek">
+                <div class="mt-5 flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
+                    <div class="report-status-chart relative h-44 w-44 shrink-0 sm:h-48 sm:w-48 lg:h-52 lg:w-52" role="img" aria-label="Diagram komposisi status proyek">
                         <svg viewBox="0 0 120 120" class="h-full w-full" aria-hidden="true">
                             <g transform="rotate(-90 60 60)">
                                 <circle cx="60" cy="60" r="46" fill="none" stroke="#e2e8f0" stroke-width="14" pathLength="100" />
@@ -133,11 +133,11 @@
                             <circle cx="60" cy="60" r="34" fill="#fff" />
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center">
-                            <span class="text-2xl font-bold text-slate-900">{{ number_format((int) $summary->total_projects) }}</span>
-                            <span class="text-xs text-slate-500">Proyek</span>
+                            <span class="text-3xl font-bold text-slate-900">{{ number_format((int) $summary->total_projects) }}</span>
+                            <span class="text-xs text-slate-500">{{ __('Proyek') }}</span>
                         </div>
                     </div>
-                    <ul class="space-y-2.5 text-sm">
+                    <ul class="w-full space-y-3 text-sm sm:min-w-0 sm:flex-1 sm:w-auto">
                         @foreach ($statusSegments as $segment)
                             <li class="flex items-center gap-2 text-slate-600">
                                 <span class="h-2.5 w-2.5 rounded-full" style="background-color: {{ $segment['color'] }}"></span>
@@ -152,8 +152,8 @@
 
             <section class="workspace-panel p-5 sm:p-6 workspace-stat">
                 <div>
-                    <h3 class="font-semibold text-slate-900">Tenggat terdekat</h3>
-                    <p class="mt-1 text-xs text-slate-500">Proyek aktif berikutnya yang perlu dipantau.</p>
+                <h3 class="font-semibold text-slate-900">{{ __('Tenggat terdekat') }}</h3>
+                <p class="mt-1 text-xs text-slate-500">{{ __('Proyek aktif berikutnya yang perlu dipantau.') }}</p>
                 </div>
                 <div class="mt-4 divide-y divide-slate-100">
                     @forelse ($upcomingProjects as $upcomingProject)
@@ -161,14 +161,14 @@
                         <div class="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
                             <div class="min-w-0">
                                 <p class="truncate text-sm font-semibold text-slate-800">{{ $upcomingProject->project_name }}</p>
-                                <p class="mt-1 truncate text-xs text-slate-500">{{ $upcomingProject->pic?->nama ?? 'Belum ada PIC' }} · {{ $upcomingProject->deadline_date?->translatedFormat('d M Y') }}</p>
+                                <p class="mt-1 truncate text-xs text-slate-500">{{ $upcomingProject->pic?->nama ?? __('Belum ada PIC') }} · {{ $upcomingProject->deadline_date?->translatedFormat('d M Y') }}</p>
                             </div>
                             <span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold {{ $daysUntilDeadline <= 7 ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-700' }}">
-                                {{ $daysUntilDeadline === 0 ? 'Hari ini' : $daysUntilDeadline . ' hari lagi' }}
+                                {{ $daysUntilDeadline === 0 ? __('Hari ini') : __(':days hari lagi', ['days' => $daysUntilDeadline]) }}
                             </span>
                         </div>
                     @empty
-                        <p class="py-8 text-center text-sm text-slate-500">Tidak ada deadline aktif yang akan datang.</p>
+                        <p class="py-8 text-center text-sm text-slate-500">{{ __('Tidak ada deadline aktif yang akan datang.') }}</p>
                     @endforelse
                 </div>
             </section>
@@ -177,12 +177,12 @@
         <section class="workspace-panel p-5 transition duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md sm:p-6 workspace-stat">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                    <h3 class="font-semibold text-slate-900">Tren Margin / Nilai per Bulan</h3>
-                    <p class="mt-1 text-xs text-slate-500">Total nilai dan margin proyek yang dibuat dalam 12 bulan terakhir.</p>
+                    <h3 class="font-semibold text-slate-900">{{ __('Tren Margin / Nilai per Bulan') }}</h3>
+                    <p class="mt-1 text-xs text-slate-500">{{ __('Total nilai dan margin proyek yang dibuat dalam 12 bulan terakhir.') }}</p>
                 </div>
                 <div class="flex flex-wrap gap-4 text-xs font-medium text-slate-600">
-                    <span class="inline-flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-sm bg-indigo-500"></span>Nilai proyek</span>
-                    <span class="inline-flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-sm bg-emerald-500"></span>Margin</span>
+                    <span class="inline-flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-sm bg-indigo-500"></span>{{ __('Nilai proyek') }}</span>
+                    <span class="inline-flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-sm bg-emerald-500"></span>{{ __('Margin') }}</span>
                 </div>
             </div>
             @if ($monthlyFinancials->isNotEmpty())
@@ -209,10 +209,10 @@
                             <div class="flex h-full min-w-0 flex-1 flex-col items-center justify-end">
                                 <div class="flex h-full w-full items-end justify-center gap-1.5">
                     <button type="button" aria-label="{{ $month['label'] }} · Nilai proyek: {{ $formatCompactMoney($month['value']) }}" title="{{ $month['label'] }} · Nilai proyek: {{ $formatCompactMoney($month['value']) }}" class="report-chart-bar report-chart-bar-value group/bar relative w-1/3 max-w-8 rounded-t-md bg-indigo-500 transition-colors hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400" style="height: {{ $valueHeight }}%">
-                        <span class="pointer-events-none absolute {{ $loop->first ? 'left-0 translate-x-0' : ($loop->last ? 'right-0 translate-x-0' : 'left-1/2 -translate-x-1/2') }} top-1 z-30 hidden whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] font-semibold text-white shadow-lg group-hover/bar:block group-focus-visible/bar:block">Nilai proyek<br>{{ $formatCompactMoney($month['value']) }}</span>
+                        <span class="pointer-events-none absolute {{ $loop->first ? 'left-0 translate-x-0' : ($loop->last ? 'right-0 translate-x-0' : 'left-1/2 -translate-x-1/2') }} top-1 z-30 hidden whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] font-semibold text-white shadow-lg group-hover/bar:block group-focus-visible/bar:block">{{ __('Nilai proyek') }}<br>{{ $formatCompactMoney($month['value']) }}</span>
                                     </button>
                                     <button type="button" aria-label="{{ $month['label'] }} · Margin: {{ $formatCompactMoney($month['margin']) }}" title="{{ $month['label'] }} · Margin: {{ $formatCompactMoney($month['margin']) }}" class="report-chart-bar {{ $month['margin'] < 0 ? 'report-chart-bar-negative bg-rose-500 hover:bg-rose-700' : 'report-chart-bar-margin bg-emerald-500 hover:bg-emerald-700' }} group/bar relative w-1/3 max-w-8 rounded-t-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400" style="height: {{ $marginHeight }}%">
-                                        <span class="pointer-events-none absolute {{ $loop->first ? 'left-0 translate-x-0' : ($loop->last ? 'right-0 translate-x-0' : 'left-1/2 -translate-x-1/2') }} top-1 z-30 hidden whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] font-semibold text-white shadow-lg group-hover/bar:block group-focus-visible/bar:block">Margin<br>{{ $formatCompactMoney($month['margin']) }}</span>
+                                        <span class="pointer-events-none absolute {{ $loop->first ? 'left-0 translate-x-0' : ($loop->last ? 'right-0 translate-x-0' : 'left-1/2 -translate-x-1/2') }} top-1 z-30 hidden whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] font-semibold text-white shadow-lg group-hover/bar:block group-focus-visible/bar:block">{{ __('Margin') }}<br>{{ $formatCompactMoney($month['margin']) }}</span>
                                     </button>
                                 </div>
                                 <span class="report-month-short mt-2 shrink-0 whitespace-nowrap text-[9px] font-medium text-slate-500 sm:text-[10px]">{{ str($month['label'])->before(' ') }}</span>
@@ -224,13 +224,13 @@
                     </div>
                 </div>
             @else
-                <div class="mt-6 flex h-40 items-center justify-center rounded-xl bg-slate-50 px-4 text-center text-sm text-slate-500">Belum ada data keuangan proyek dalam 12 bulan terakhir.</div>
+                <div class="mt-6 flex h-40 items-center justify-center rounded-xl bg-slate-50 px-4 text-center text-sm text-slate-500">{{ __('Belum ada data keuangan proyek dalam 12 bulan terakhir.') }}</div>
             @endif
         </section>
 
         <section data-report-table class="workspace-panel scroll-mt-6 workspace-stat overflow-hidden">
             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
-                <div><p class="workspace-kicker">Data detail</p><h3 class="mt-1 text-lg font-bold tracking-tight text-slate-900">Rincian proyek</h3></div>
+                <div><p class="workspace-kicker">{{ __('Data detail') }}</p><h3 class="mt-1 text-lg font-bold tracking-tight text-slate-900">{{ __('Rincian proyek') }}</h3></div>
                 <div class="flex flex-wrap items-center gap-3">
                     <div class="flex flex-wrap gap-2 text-xs">
                         @foreach ($statusLabels as $status => $label)
@@ -241,9 +241,9 @@
             </div>
             <div class="flex flex-col gap-2 border-b border-slate-100 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 print:hidden">
                 <label class="relative block w-full sm:max-w-sm">
-                    <span class="sr-only">Cari rincian proyek</span>
+                    <span class="sr-only">{{ __('Cari rincian proyek') }}</span>
                     <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400" aria-hidden="true">⌕</span>
-                    <input form="reportFilters" type="search" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Cari proyek, PIC, atau pelanggan…" class="workspace-input h-10 pl-9" autocomplete="off">
+                    <input form="reportFilters" type="search" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="{{ __('Cari proyek, PIC, atau pelanggan…') }}" class="workspace-input h-10 pl-9" autocomplete="off">
                 </label>
                 @unless ($isPrint)
                     <p class="text-xs text-slate-500">Menampilkan {{ $projects->firstItem() ?? 0 }}–{{ $projects->lastItem() ?? 0 }} dari {{ $projects->total() }} proyek</p>
@@ -284,14 +284,14 @@
                 <table class="workspace-table w-full text-left text-sm">
                     <thead class="bg-slate-50 text-xs uppercase text-slate-500">
                         <tr>
-                            <th class="px-5 py-3 font-semibold">Proyek</th>
-                            <th class="px-5 py-3 font-semibold">Pelanggan</th>
-                            <th class="px-5 py-3 font-semibold">PIC</th>
-                            <th class="px-5 py-3 font-semibold">Status</th>
-                            <th class="px-5 py-3 font-semibold">Tenggat</th>
-                            <th class="px-5 py-3 text-right font-semibold">Nilai</th>
-                            <th class="px-5 py-3 text-right font-semibold">Biaya</th>
-                            <th class="px-5 py-3 text-right font-semibold">Margin</th>
+                            <th class="px-5 py-3 font-semibold">{{ __('Proyek') }}</th>
+                            <th class="px-5 py-3 font-semibold">{{ __('Pelanggan') }}</th>
+                            <th class="px-5 py-3 font-semibold">{{ __('PIC') }}</th>
+                            <th class="px-5 py-3 font-semibold">{{ __('Status') }}</th>
+                            <th class="px-5 py-3 font-semibold">{{ __('Tenggat') }}</th>
+                            <th class="px-5 py-3 text-right font-semibold">{{ __('Nilai') }}</th>
+                            <th class="px-5 py-3 text-right font-semibold">{{ __('Biaya') }}</th>
+                            <th class="px-5 py-3 text-right font-semibold">{{ __('Margin') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -318,7 +318,7 @@
                                 <td class="whitespace-nowrap px-5 py-3 text-right font-medium {{ (float) $project->margin < 0 ? 'rounded bg-rose-50 text-rose-700' : 'text-slate-700' }}">{{ $project->margin !== null ? $money($project->margin) : '-' }}</td>
                             </tr>
                         @empty
-                            <tr><td colspan="8" class="px-5 py-10 text-center text-slate-500">Belum ada proyek untuk filter ini.</td></tr>
+                            <tr><td colspan="8" class="px-5 py-10 text-center text-slate-500">{{ __('Belum ada proyek untuk filter ini.') }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>

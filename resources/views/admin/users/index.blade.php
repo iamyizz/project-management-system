@@ -1,4 +1,4 @@
-<x-admin-layout title="Kelola Pengguna">
+<x-admin-layout :title="__('Kelola Pengguna')">
     @php
         $input = 'w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20';
         $label = 'mb-1.5 block text-sm font-medium text-slate-700';
@@ -13,16 +13,16 @@
         {{-- Header --}}
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-                <p class="workspace-kicker">Tim dan akses</p>
-                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Manajemen Pengguna</h2>
-                <p class="mt-2 text-sm text-slate-500">Atur akun, peran, dan status akses anggota workspace.</p>
+                <p class="workspace-kicker">{{ __('Tim dan akses') }}</p>
+                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">{{ __('Manajemen Pengguna') }}</h2>
+                <p class="mt-2 text-sm text-slate-500">{{ __('Atur akun, peran, dan status akses anggota workspace.') }}</p>
             </div>
             <button type="button" onclick="openModal('createModal')"
-                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500/20">
+                    class="action-btn action-btn--primary rounded-xl px-4 py-2.5 text-sm font-semibold">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                Tambah pengguna
+                {{ __('Tambah pengguna') }}
             </button>
         </div>
 
@@ -47,7 +47,7 @@
                     <svg class="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                     </svg>
-                    <input type="search" id="search" placeholder="Cari nama atau email..." class="workspace-input pl-10">
+                    <input type="search" id="search" placeholder="{{ __('Cari nama atau email...') }}" class="workspace-input pl-10">
                 </div>
                 <span class="text-xs font-medium text-slate-500">{{ method_exists($users, 'total') ? $users->total() : $users->count() }} akun terdaftar</span>
             </div>
@@ -57,10 +57,10 @@
                 <table class="workspace-table w-full text-left text-sm">
                     <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
                         <tr>
-                            <th class="px-6 py-3 font-semibold">Pengguna</th>
-                            <th class="px-6 py-3 font-semibold">Peran</th>
-                            <th class="px-6 py-3 font-semibold">Status</th>
-                            <th class="px-6 py-3 text-right font-semibold">Aksi</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('Pengguna') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('Peran') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('Status') }}</th>
+                            <th class="px-6 py-3 text-right font-semibold">{{ __('Aksi') }}</th>
                         </tr>
                     </thead>
                     <tbody id="userTable" class="divide-y divide-slate-100">
@@ -79,17 +79,17 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="rounded-full px-2.5 py-1 text-xs font-semibold {{ $user->role === 'admin' ? 'bg-violet-50 text-violet-700' : 'bg-slate-100 text-slate-700' }}">
-                                        {{ $user->role === 'admin' ? 'Administrator' : 'Pengguna' }}
+                                            {{ $user->role === 'admin' ? __('Administrator') : __('Pengguna') }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4">
                                     @if ($user->is_active)
                                         <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-                                            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Aktif
+                                            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> {{ __('Aktif') }}
                                         </span>
                                     @else
                                         <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
-                                            <span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span> Nonaktif
+                                            <span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span> {{ __('Nonaktif') }}
                                         </span>
                                     @endif
                                 </td>
@@ -103,7 +103,7 @@
                                             data-email="{{ $user->email }}"
                                             data-role="{{ $user->role }}"
                                             data-active="{{ $user->is_active ? 1 : 0 }}"
-                                            class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700">
+                                            class="action-btn action-btn--secondary text-sm">
                                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
                                         </svg>
@@ -113,7 +113,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-6 py-12 text-center text-slate-500">Belum ada user.</td>
+                                <td colspan="4" class="px-6 py-12 text-center text-slate-500">{{ __('Belum ada user.') }}</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -163,7 +163,7 @@
                                 data-email="{{ $user->email }}"
                                 data-role="{{ $user->role }}"
                                 data-active="{{ $user->is_active ? 1 : 0 }}"
-                                class="w-full inline-flex items-center justify-center gap-2 rounded-lg border border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700 transition hover:bg-indigo-100">
+                                class="action-btn action-btn--detail w-full px-4 py-2 text-sm">
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
                             </svg>
@@ -172,8 +172,8 @@
                     </div>
                 @empty
                     <div class="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center text-slate-500">
-                        <p class="font-medium">Belum ada user</p>
-                            <p class="mt-1 text-sm">Klik tombol "Tambah pengguna" untuk menambahkan pengguna baru</p>
+                        <p class="font-medium">{{ __('Belum ada user') }}</p>
+                            <p class="mt-1 text-sm">{{ __('Klik tombol "Tambah pengguna" untuk menambahkan pengguna baru') }}</p>
                     </div>
                 @endforelse
             </div>
@@ -188,7 +188,7 @@
     <div id="createModal" class="modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4" onclick="if (event.target === this) closeModal('createModal')">
         <div class="w-full max-w-lg rounded-2xl bg-white shadow-xl">
             <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-                <h3 class="text-lg font-semibold text-slate-900">Tambah pengguna</h3>
+                <h3 class="text-lg font-semibold text-slate-900">{{ __('Tambah pengguna') }}</h3>
                 <button type="button" onclick="closeModal('createModal')" class="text-2xl leading-none text-slate-400 hover:text-slate-600">&times;</button>
             </div>
 
@@ -206,29 +206,29 @@
                     @endif
 
                     <div>
-                        <label class="{{ $label }}">Nama</label>
-                        <input type="text" name="nama" value="{{ $formType === 'create' ? old('nama') : '' }}" placeholder="Nama lengkap" class="{{ $input }}" required>
+                        <label class="{{ $label }}">{{ __('Nama') }}</label>
+                        <input type="text" name="nama" value="{{ $formType === 'create' ? old('nama') : '' }}" placeholder="{{ __('Nama lengkap') }}" class="{{ $input }}" required>
                     </div>
                     <div>
-                        <label class="{{ $label }}">Email</label>
+                        <label class="{{ $label }}">{{ __('Email') }}</label>
                         <input type="email" name="email" value="{{ $formType === 'create' ? old('email') : '' }}" placeholder="nama@email.com" class="{{ $input }}" required>
                     </div>
                     <div>
-                        <label class="{{ $label }}">Password</label>
-                        <input type="password" name="password" placeholder="Minimal 8 karakter" class="{{ $input }}" required>
+                        <label class="{{ $label }}">{{ __('Password') }}</label>
+                        <input type="password" name="password" placeholder="{{ __('Minimal 8 karakter') }}" class="{{ $input }}" required>
                     </div>
                     <div>
-                        <label class="{{ $label }}">Role</label>
+                        <label class="{{ $label }}">{{ __('Role') }}</label>
                         <select name="role" class="{{ $input }}">
-                            <option value="user" @selected($formType === 'create' && old('role') === 'user')>Pengguna</option>
-                            <option value="admin" @selected($formType === 'create' && old('role') === 'admin')>Administrator</option>
+                            <option value="user" @selected($formType === 'create' && old('role') === 'user')>{{ __('Pengguna') }}</option>
+                            <option value="admin" @selected($formType === 'create' && old('role') === 'admin')>{{ __('Administrator') }}</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="flex justify-end gap-3 rounded-b-2xl border-t border-slate-200 bg-slate-50 px-6 py-4">
                     <button type="button" onclick="closeModal('createModal')" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100">Batal</button>
-                    <button type="submit" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">Simpan</button>
+                    <button type="submit" class="action-btn action-btn--primary px-4 py-2 text-sm font-semibold">Simpan</button>
                 </div>
             </form>
         </div>
@@ -238,7 +238,7 @@
     <div id="editModal" class="modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4" onclick="if (event.target === this) closeModal('editModal')">
         <div class="w-full max-w-lg rounded-2xl bg-white shadow-xl">
             <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-                <h3 class="text-lg font-semibold text-slate-900">Ubah pengguna</h3>
+                <h3 class="text-lg font-semibold text-slate-900">{{ __('Ubah pengguna') }}</h3>
                 <button type="button" onclick="closeModal('editModal')" class="text-2xl leading-none text-slate-400 hover:text-slate-600">&times;</button>
             </div>
 
@@ -259,26 +259,26 @@
                     @endif
 
                     <div>
-                        <label class="{{ $label }}">Nama</label>
+                        <label class="{{ $label }}">{{ __('Nama') }}</label>
                         <input type="text" name="nama" id="edit_nama" value="{{ $formType === 'edit' ? old('nama') : '' }}" class="{{ $input }}" required>
                     </div>
                     <div>
-                        <label class="{{ $label }}">Email</label>
+                        <label class="{{ $label }}">{{ __('Email') }}</label>
                         <input type="email" name="email" id="edit_email" value="{{ $formType === 'edit' ? old('email') : '' }}" class="{{ $input }}" required>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="{{ $label }}">Peran</label>
+                            <label class="{{ $label }}">{{ __('Peran') }}</label>
                             <select name="role" id="edit_role" class="{{ $input }}">
-                                <option value="user" @selected($formType === 'edit' && old('role') === 'user')>Pengguna</option>
-                                <option value="admin" @selected($formType === 'edit' && old('role') === 'admin')>Administrator</option>
+                                <option value="user" @selected($formType === 'edit' && old('role') === 'user')>{{ __('Pengguna') }}</option>
+                                <option value="admin" @selected($formType === 'edit' && old('role') === 'admin')>{{ __('Administrator') }}</option>
                             </select>
                         </div>
                         <div>
-                            <label class="{{ $label }}">Status</label>
+                            <label class="{{ $label }}">{{ __('Status') }}</label>
                             <select name="is_active" id="edit_active" class="{{ $input }}">
-                                <option value="1" @selected($formType === 'edit' && old('is_active') === '1')>Aktif</option>
-                                <option value="0" @selected($formType === 'edit' && old('is_active') === '0')>Nonaktif</option>
+                                <option value="1" @selected($formType === 'edit' && old('is_active') === '1')>{{ __('Aktif') }}</option>
+                                <option value="0" @selected($formType === 'edit' && old('is_active') === '0')>{{ __('Nonaktif') }}</option>
                             </select>
                         </div>
                     </div>
@@ -286,7 +286,7 @@
 
                 <div class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
                     <button type="button" onclick="closeModal('editModal')" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100">Batal</button>
-                    <button type="submit" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">Simpan perubahan</button>
+                    <button type="submit" class="action-btn action-btn--primary px-4 py-2 text-sm font-semibold">Simpan perubahan</button>
                 </div>
             </form>
 

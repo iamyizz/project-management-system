@@ -1,4 +1,4 @@
-<x-admin-layout title="Beranda Admin">
+<x-admin-layout :title="__('Beranda')">
     <div class="space-y-7 sm:space-y-8">
 
         {{-- Banner --}}
@@ -8,29 +8,30 @@
                     <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v17.25h17.25M7.5 14.25l3.75-3.75 3 3 5.25-6" /></svg>
                 </span>
                 <div>
-                    <p class="text-xs font-semibold text-indigo-700">Ringkasan workspace</p>
-                    <h2 class="mt-1 text-xl font-bold tracking-tight text-slate-950 sm:text-2xl">Selamat datang, {{ auth()->user()->nama }}</h2>
-                    <p class="mt-1.5 max-w-xl text-sm leading-6 text-slate-500">Pantau proyek, kelola tim, dan lihat perkembangan operasional perusahaan dari satu tempat.</p>
+                    <p class="text-xs font-semibold text-indigo-700">{{ __('Ringkasan workspace') }}</p>
+                    <h2 class="mt-1 text-xl font-bold tracking-tight text-slate-950 sm:text-2xl">{{ __('Selamat datang, :name', ['name' => auth()->user()->nama]) }}</h2>
+                    <p class="mt-1.5 max-w-xl text-sm leading-6 text-slate-500">{{ __('Pantau proyek, kelola tim, dan lihat perkembangan operasional perusahaan dari satu tempat.') }}</p>
                 </div>
             </div>
             <a href="{{ route('admin.projects.index') }}" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500/20">
-                    Kelola proyek <span aria-hidden="true">&rarr;</span>
+                    {{ __('Kelola proyek') }} <span aria-hidden="true">&rarr;</span>
             </a>
         </div>
 
-        {{-- Statistik - 2x2 di Mobile, 4 kolom di Desktop --}}
+        {{-- Statistik --}}
         @php
             $stats = [
-                ['label' => 'Total pengguna',   'value' => $totalUsers ?? 0,    'class' => 'bg-indigo-50 text-indigo-700', 'note' => 'Akun terdaftar'],
-                ['label' => 'Total proyek', 'value' => $totalProjects ?? 0, 'class' => 'bg-emerald-50 text-emerald-700', 'note' => 'Seluruh proyek'],
-                ['label' => 'Sedang berjalan', 'value' => $ongoingTasks ?? 0,  'class' => 'bg-amber-50 text-amber-700', 'note' => 'Status berjalan'],
-                ['label' => 'Proyek selesai',  'value' => $doneTasks ?? 0,     'class' => 'bg-sky-50 text-sky-700', 'note' => 'Status selesai'],
+                ['label' => __('Total pengguna'), 'value' => $totalUsers ?? 0, 'class' => 'bg-indigo-50 text-indigo-700', 'note' => __('Akun terdaftar')],
+                ['label' => __('Total proyek'), 'value' => $totalProjects ?? 0, 'class' => 'bg-emerald-50 text-emerald-700', 'note' => __('Seluruh proyek')],
+                ['label' => __('Total opportunity'), 'value' => $totalOpportunities ?? 0, 'class' => 'bg-violet-50 text-violet-700', 'note' => __('Proyek masih direncanakan')],
+                ['label' => __('Sedang berjalan'), 'value' => $ongoingTasks ?? 0, 'class' => 'bg-amber-50 text-amber-700', 'note' => __('Status berjalan')],
+                ['label' => __('Proyek selesai'), 'value' => $doneTasks ?? 0, 'class' => 'bg-sky-50 text-sky-700', 'note' => __('Status selesai')],
             ];
         @endphp
 
-        <div class="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:gap-6">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 xl:grid-cols-5 xl:gap-6">
             @foreach ($stats as $stat)
-                <div class="workspace-stat">
+                <div class="workspace-stat last:col-span-2 sm:last:col-span-1">
                     <div class="flex items-center justify-between gap-2">
                         <p class="text-xs font-semibold text-slate-500 sm:text-sm">{{ $stat['label'] }}</p>
                         <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl {{ $stat['class'] }}">
@@ -46,14 +47,14 @@
         {{-- Menu cepat --}}
         <div>
             <div class="mb-4 flex items-end justify-between gap-3">
-                <div><p class="workspace-kicker">Akses cepat</p><h3 class="mt-1 text-lg font-bold tracking-tight text-slate-900">Menu utama</h3></div>
+                <div><p class="workspace-kicker">{{ __('Akses cepat') }}</p><h3 class="mt-1 text-lg font-bold tracking-tight text-slate-900">{{ __('Menu utama') }}</h3></div>
             </div>
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 @foreach ([
-                    ['Kelola Pengguna',    'Atur akses dan akun tim', route('admin.users.index'), 'bg-indigo-600'],
-                    ['Pelanggan', 'Kelola data pelanggan', route('admin.end-users.index'), 'bg-sky-600'],
-                    ['Proyek', 'Kelola seluruh proyek', route('admin.projects.index'), 'bg-emerald-600'],
-                    ['Laporan',         'Pantau progres dan nilai',     route('admin.reports.index'), 'bg-amber-500'],
+                    [__('Kelola Pengguna'), __('Atur akses dan akun tim'), route('admin.users.index'), 'bg-indigo-600'],
+                    [__('Pelanggan'), __('Kelola data pelanggan'), route('admin.end-users.index'), 'bg-sky-600'],
+                    [__('Proyek'), __('Kelola seluruh proyek'), route('admin.projects.index'), 'bg-emerald-600'],
+                    [__('Laporan'), __('Pantau progres dan nilai'), route('admin.reports.index'), 'bg-amber-500'],
                 ] as [$label, $desc, $url, $bg])
                     <a href="{{ $url }}"
                        class="group flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm shadow-slate-900/[0.03] transition duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md sm:gap-4 sm:p-5">
@@ -75,8 +76,8 @@
         {{-- Project Terbaru --}}
         <div class="workspace-panel overflow-hidden">
             <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-5 sm:px-6">
-                <div><p class="workspace-kicker">Aktivitas terbaru</p><h3 class="mt-1 text-lg font-bold tracking-tight text-slate-900">Proyek terbaru</h3></div>
-                <a href="{{ route('admin.projects.index') }}" class="shrink-0 rounded-xl px-3 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50">Semua proyek <span aria-hidden="true">&rarr;</span></a>
+                <div><p class="workspace-kicker">{{ __('Aktivitas terbaru') }}</p><h3 class="mt-1 text-lg font-bold tracking-tight text-slate-900">{{ __('Proyek terbaru') }}</h3></div>
+                <a href="{{ route('admin.projects.index') }}" class="shrink-0 rounded-xl px-3 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50">{{ __('Semua proyek') }} <span aria-hidden="true">&rarr;</span></a>
             </div>
 
             {{-- Desktop: Tabel --}}
@@ -84,12 +85,12 @@
                 <table class="workspace-table w-full text-left text-sm">
                     <thead class="bg-slate-50 text-xs uppercase text-slate-500">
                         <tr>
-                            <th class="px-6 py-3 font-semibold">No</th>
-                            <th class="px-6 py-3 font-semibold">Nama proyek</th>
-                            <th class="px-6 py-3 font-semibold">Pelanggan</th>
-                            <th class="px-6 py-3 font-semibold">PIC</th>
-                            <th class="px-6 py-3 font-semibold">Tenggat</th>
-                            <th class="px-6 py-3 font-semibold">Status</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('No') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('Nama proyek') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('Pelanggan') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('PIC') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('Tenggat') }}</th>
+                            <th class="px-6 py-3 font-semibold">{{ __('Status') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -115,7 +116,7 @@
                                     @if ($project->deadline_date)
                                         {{ $project->deadline_date->translatedFormat('d M Y') }}
                                         @if ($overdue)
-                                            <span class="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">Terlambat</span>
+                                            <span class="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">{{ __('Terlambat') }}</span>
                                         @endif
                                     @else
                                         -
@@ -123,13 +124,13 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $badge }}">
-                                        {{ ['planning' => 'Direncanakan', 'progress' => 'Berjalan', 'done' => 'Selesai', 'cancel' => 'Dibatalkan'][$project->status] ?? ucfirst($project->status) }}
+                                        {{ ['planning' => __('Direncanakan'), 'progress' => __('Berjalan'), 'done' => __('Selesai'), 'cancel' => __('Dibatalkan')][$project->status] ?? ucfirst($project->status) }}
                                     </span>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-10 text-center text-slate-500">Belum ada proyek</td>
+                                <td colspan="6" class="px-6 py-10 text-center text-slate-500">{{ __('Belum ada proyek') }}</td>
                             </tr>
                         @endforelse
                     </tbody>

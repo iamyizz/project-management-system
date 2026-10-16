@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EndUserController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
@@ -20,6 +21,7 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'role:admin,user'])->group(function () {
+    Route::post('/locale', [LocaleController::class, 'update'])->name('locale.update');
     Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])
         ->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])

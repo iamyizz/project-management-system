@@ -1,10 +1,10 @@
-<x-admin-layout title="Beranda">
+<x-admin-layout :title="__('Beranda')">
     @php
         $statusStyles = [
-            'planning' => ['Direncanakan', 'bg-amber-50 text-amber-700'],
-            'progress' => ['Berjalan', 'bg-blue-50 text-blue-700'],
-            'done' => ['Selesai', 'bg-emerald-50 text-emerald-700'],
-            'cancel' => ['Dibatalkan', 'bg-rose-50 text-rose-700'],
+            'planning' => [__('Direncanakan'), 'bg-amber-50 text-amber-700'],
+            'progress' => [__('Berjalan'), 'bg-blue-50 text-blue-700'],
+            'done' => [__('Selesai'), 'bg-emerald-50 text-emerald-700'],
+            'cancel' => [__('Dibatalkan'), 'bg-rose-50 text-rose-700'],
         ];
     @endphp
 
@@ -15,13 +15,13 @@
                     <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75A2.25 2.25 0 016 4.5h12a2.25 2.25 0 012.25 2.25v10.5A2.25 2.25 0 0118 19.5H6a2.25 2.25 0 01-2.25-2.25V6.75zM8.25 9h7.5M8.25 12h7.5m-7.5 3h4.5" /></svg>
                 </span>
                 <div class="max-w-2xl">
-                    <p class="text-xs font-semibold text-indigo-700">Ruang kerja proyek</p>
-                    <h2 class="mt-1 text-xl font-bold tracking-tight text-slate-950 sm:text-2xl">Halo, {{ auth()->user()->nama }}</h2>
-                    <p class="mt-1.5 text-sm leading-6 text-slate-500">Lihat prioritas kerja, pantau tenggat, dan perbarui progres proyek yang kamu pegang.</p>
+                    <p class="text-xs font-semibold text-indigo-700">{{ __('Ruang kerja proyek') }}</p>
+                    <h2 class="mt-1 text-xl font-bold tracking-tight text-slate-950 sm:text-2xl">{{ __('Halo, :name', ['name' => auth()->user()->nama]) }}</h2>
+                    <p class="mt-1.5 text-sm leading-6 text-slate-500">{{ __('Lihat prioritas kerja, pantau tenggat, dan perbarui progres proyek yang kamu pegang.') }}</p>
                 </div>
             </div>
             <a href="{{ route('user.projects.index') }}" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500/20">
-                    Buka proyek saya <span aria-hidden="true">&rarr;</span>
+                    {{ __('Buka proyek saya') }} <span aria-hidden="true">&rarr;</span>
             </a>
         </section>
 
@@ -34,10 +34,10 @@
 
         <section class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
             @foreach ([
-                ['Total proyek', $myProjects, 'text-slate-900', 'bg-slate-100', 'border-slate-200'],
-                ['Proyek aktif', $myOngoing, 'text-blue-700', 'bg-blue-50', 'border-blue-100'],
-                ['Selesai', $myDone, 'text-emerald-700', 'bg-emerald-50', 'border-emerald-100'],
-                ['Perlu Perhatian', $needsAttention, 'text-rose-700', 'bg-rose-50', 'border-rose-100'],
+                [__('Total proyek'), $myProjects, 'text-slate-900', 'bg-slate-100', 'border-slate-200'],
+                [__('Proyek aktif'), $myOngoing, 'text-blue-700', 'bg-blue-50', 'border-blue-100'],
+                [__('Selesai'), $myDone, 'text-emerald-700', 'bg-emerald-50', 'border-emerald-100'],
+                [__('Perlu Perhatian'), $needsAttention, 'text-rose-700', 'bg-rose-50', 'border-rose-100'],
             ] as [$label, $value, $color, $iconBg, $border])
                 <div class="workspace-stat {{ $border }}">
                     <div class="flex items-center justify-between gap-2">
@@ -52,7 +52,7 @@
                     </div>
                     <p class="mt-3 text-2xl font-bold tracking-tight {{ $color }} sm:text-3xl">{{ number_format($value) }}</p>
                     @if ($label === 'Perlu Perhatian')
-                        <p class="mt-1 text-[11px] text-slate-500">Terlambat atau mencapai tenggat dalam 7 hari</p>
+                        <p class="mt-1 text-[11px] text-slate-500">{{ __('Terlambat atau mencapai tenggat dalam 7 hari') }}</p>
                     @endif
                 </div>
             @endforeach
@@ -61,10 +61,10 @@
         <section class="workspace-panel overflow-hidden">
             <div class="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200 px-5 py-4 sm:px-6">
                 <div>
-                    <h3 class="font-semibold text-slate-900">Prioritas tenggat</h3>
-                    <p class="mt-1 text-xs text-slate-500">Proyek aktif yang terlambat atau mencapai tenggat dalam 7 hari.</p>
+                    <h3 class="font-semibold text-slate-900">{{ __('Prioritas tenggat') }}</h3>
+                    <p class="mt-1 text-xs text-slate-500">{{ __('Proyek aktif yang terlambat atau mencapai tenggat dalam 7 hari.') }}</p>
                 </div>
-                <a href="{{ route('user.projects.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">Semua proyek <span aria-hidden="true">&rarr;</span></a>
+                <a href="{{ route('user.projects.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">{{ __('Semua proyek') }} <span aria-hidden="true">&rarr;</span></a>
             </div>
 
             @forelse ($priorityProjects as $project)
@@ -85,11 +85,11 @@
                             <p class="mt-2 inline-flex items-center gap-1.5 text-sm font-medium {{ $isOverdue ? 'text-rose-600' : 'text-amber-700' }}">
                                 <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zM8.75 5.5a.75.75 0 011.5 0v4.19l2.03 1.22a.75.75 0 11-.78 1.28l-2.39-1.44a.75.75 0 01-.36-.64V5.5z" clip-rule="evenodd" /></svg>
                                 @if ($isOverdue)
-                                    Terlambat {{ $deadline->diffInDays(today()) }} hari · {{ $deadline->translatedFormat('d M Y') }}
+                                    {{ __('Terlambat') }} {{ $deadline->diffInDays(today()) }} {{ __('hari') }} · {{ $deadline->translatedFormat('d M Y') }}
                                 @elseif ($daysUntilDeadline === 0)
-                                    Jatuh tempo hari ini · {{ $deadline->translatedFormat('d M Y') }}
+                                    {{ __('Jatuh tempo hari ini') }} · {{ $deadline->translatedFormat('d M Y') }}
                                 @else
-                                    Dalam {{ $daysUntilDeadline }} hari · {{ $deadline->translatedFormat('d M Y') }}
+                                    {{ __('Dalam :days hari', ['days' => $daysUntilDeadline]) }} · {{ $deadline->translatedFormat('d M Y') }}
                                 @endif
                             </p>
                         </div>
@@ -99,11 +99,11 @@
                             @method('PUT')
                             <label for="status-{{ $project->id }}" class="sr-only">Update status {{ $project->project_name }}</label>
                             <select id="status-{{ $project->id }}" name="status" class="workspace-input sm:w-44">
-                                @foreach (($project->status === 'planning' ? ['progress' => 'Mulai proyek'] : ['done' => 'Tandai selesai']) as $status => $label)
+                                @foreach (($project->status === 'planning' ? ['progress' => __('Mulai proyek')] : ['done' => __('Tandai selesai')]) as $status => $label)
                                     <option value="{{ $status }}">{{ $label }}</option>
                                 @endforeach
                             </select>
-                            <button type="submit" class="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500/20">{{ $project->status === 'planning' ? 'Mulai berjalan' : 'Tandai selesai' }}</button>
+                            <button type="submit" class="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500/20">{{ $project->status === 'planning' ? __('Mulai berjalan') : __('Tandai selesai') }}</button>
                         </form>
                     </div>
                 </article>
@@ -112,8 +112,8 @@
                     <span class="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
                         <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.78-9.22a.75.75 0 00-1.06-1.06l-3.47 3.47-1.47-1.47a.75.75 0 00-1.06 1.06l2 2a.75.75 0 001.06 0l4-4z" clip-rule="evenodd" /></svg>
                     </span>
-                    <p class="mt-3 font-semibold text-slate-800">Belum ada deadline yang mendesak</p>
-                    <p class="mt-1 text-sm text-slate-500">Proyek aktif dengan tenggat dekat akan muncul di sini.</p>
+                    <p class="mt-3 font-semibold text-slate-800">{{ __('Belum ada deadline yang mendesak') }}</p>
+                    <p class="mt-1 text-sm text-slate-500">{{ __('Proyek aktif dengan tenggat dekat akan muncul di sini.') }}</p>
                 </div>
             @endforelse
         </section>
@@ -121,10 +121,10 @@
         <section class="workspace-panel overflow-hidden">
             <div class="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-4 sm:px-6">
                 <div>
-                    <h3 class="font-semibold text-slate-900">Proyek terbaru</h3>
-                    <p class="mt-1 text-xs text-slate-500">Proyek yang terakhir diperbarui.</p>
+                    <h3 class="font-semibold text-slate-900">{{ __('Proyek terbaru') }}</h3>
+                    <p class="mt-1 text-xs text-slate-500">{{ __('Proyek yang terakhir diperbarui.') }}</p>
                 </div>
-                <a href="{{ route('user.projects.index') }}" class="shrink-0 text-sm font-medium text-indigo-600 hover:text-indigo-800">Lihat semua proyek <span aria-hidden="true">&rarr;</span></a>
+                <a href="{{ route('user.projects.index') }}" class="shrink-0 text-sm font-medium text-indigo-600 hover:text-indigo-800">{{ __('Lihat semua proyek') }} <span aria-hidden="true">&rarr;</span></a>
             </div>
             <div class="divide-y divide-slate-100">
                 @forelse ($recentProjects as $project)
@@ -138,8 +138,8 @@
                     </div>
                 @empty
                     <div class="px-5 py-10 text-center sm:px-6">
-                        <p class="font-medium text-slate-700">Belum ada proyek yang ditugaskan</p>
-                        <p class="mt-1 text-sm text-slate-500">Proyek dari admin akan muncul di sini.</p>
+                        <p class="font-medium text-slate-700">{{ __('Belum ada proyek yang ditugaskan') }}</p>
+                        <p class="mt-1 text-sm text-slate-500">{{ __('Proyek dari admin akan muncul di sini.') }}</p>
                     </div>
                 @endforelse
             </div>

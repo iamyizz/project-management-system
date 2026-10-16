@@ -1,12 +1,12 @@
 @props(['title' => 'Dashboard'])
 
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title }} | {{ config('app.name') }}</title>
+    <title>{{ __($title) }} | {{ config('app.name') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo%20perusahaan/logo%20ntu%20transparant.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -26,15 +26,15 @@
 
     $menus = auth()->user()->role === 'admin'
         ? [
-            ['label' => 'Beranda', 'route' => 'dashboard',         'icon' => $icons['home']],
-            ['label' => 'Kelola Pengguna', 'route' => 'admin.users.index', 'icon' => $icons['users']],
-            ['label' => 'Pelanggan', 'route' => 'admin.end-users.index', 'icon' => $icons['building']],
-            ['label' => 'Proyek',     'route' => 'admin.projects.index', 'icon' => $icons['folder']],
-            ['label' => 'Laporan',      'route' => 'admin.reports.index', 'icon' => $icons['chart']],
+            ['label' => __('Beranda'), 'route' => 'dashboard',         'icon' => $icons['home']],
+            ['label' => __('Kelola Pengguna'), 'route' => 'admin.users.index', 'icon' => $icons['users']],
+            ['label' => __('Pelanggan'), 'route' => 'admin.end-users.index', 'icon' => $icons['building']],
+            ['label' => __('Proyek'),     'route' => 'admin.projects.index', 'icon' => $icons['folder']],
+            ['label' => __('Laporan'),      'route' => 'admin.reports.index', 'icon' => $icons['chart']],
         ]
         : [
-            ['label' => 'Beranda',    'route' => 'user.dashboard',         'icon' => $icons['home']],
-            ['label' => 'Proyek Saya', 'route' => 'user.projects.index',    'icon' => $icons['folder']],
+            ['label' => __('Beranda'),    'route' => 'user.dashboard',         'icon' => $icons['home']],
+            ['label' => __('Proyek Saya'), 'route' => 'user.projects.index',    'icon' => $icons['folder']],
         ];
 @endphp
 
@@ -51,14 +51,14 @@
             <img src="{{ asset('images/logo%20perusahaan/logo%20ntu%20transparant.png') }}" alt="Logo Nuke Teknologi Utama" class="h-12 w-12 shrink-0 rounded-xl bg-slate-50 p-1 object-contain ring-1 ring-slate-200/70">
             <div class="min-w-0">
                 <p class="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-600">NTU Workspace</p>
-                <h2 class="text-sm font-bold leading-snug text-slate-900">Manajemen Proyek</h2>
+                <h2 class="text-sm font-bold leading-snug text-slate-900">{{ __('Manajemen Proyek') }}</h2>
             </div>
         </div>
     </div>
 
     {{-- Menu Section --}}
     <nav class="flex-1 overflow-y-auto px-3 py-6">
-        <p class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Ruang Kerja</p>
+        <p class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">{{ __('Ruang Kerja') }}</p>
 
         <div class="space-y-2">
             @foreach ($menus as $menu)
@@ -103,14 +103,19 @@
                     </svg>
                 </button>
                 <div>
-                    <h1 class="text-lg font-bold tracking-tight text-slate-900">{{ $title }}</h1>
+                <h1 class="text-lg font-bold tracking-tight text-slate-900">{{ __($title) }}</h1>
                 </div>
             </div>
 
             {{-- Right Section --}}
             <div class="flex items-center gap-4 sm:gap-6">
+                <form method="POST" action="{{ route('locale.update') }}" class="flex items-center rounded-xl border border-slate-200 p-0.5">
+                    @csrf
+                    <button name="locale" value="id" type="submit" aria-label="Bahasa Indonesia" class="rounded-lg px-2 py-1.5 text-xs font-bold transition {{ app()->getLocale() === 'id' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800' }}">ID</button>
+                    <button name="locale" value="en" type="submit" aria-label="English" class="rounded-lg px-2 py-1.5 text-xs font-bold transition {{ app()->getLocale() === 'en' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800' }}">EN</button>
+                </form>
                 <details class="relative">
-                    <summary aria-label="Notifikasi" class="relative flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition hover:bg-slate-50 hover:text-indigo-600">
+                    <summary aria-label="{{ __('Notifikasi') }}" class="relative flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition hover:bg-slate-50 hover:text-indigo-600">
                         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 18.75a2.25 2.25 0 01-4.5 0m9-3H5.25c1.1-1.1 1.5-2.6 1.5-4.5a5.25 5.25 0 1110.5 0c0 1.9.4 3.4 1.5 4.5z" /></svg>
                         @if ($unreadNotificationCount > 0)
                             <span class="absolute -right-1 -top-1 min-w-5 rounded-full bg-rose-600 px-1 text-center text-[10px] font-bold leading-5 text-white">{{ $unreadNotificationCount > 9 ? '9+' : $unreadNotificationCount }}</span>
@@ -118,9 +123,9 @@
                     </summary>
                     <div class="absolute right-0 z-50 mt-3 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
                         <div class="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-                            <p class="text-sm font-semibold text-slate-900">Notifikasi</p>
+                            <p class="text-sm font-semibold text-slate-900">{{ __('Notifikasi') }}</p>
                             @if ($unreadNotificationCount > 0)
-                                <form method="POST" action="{{ route('notifications.read-all') }}">@csrf<button class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Tandai semua dibaca</button></form>
+                                <form method="POST" action="{{ route('notifications.read-all') }}">@csrf<button class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">{{ __('Tandai semua dibaca') }}</button></form>
                             @endif
                         </div>
                         <div class="max-h-80 overflow-y-auto">
@@ -133,7 +138,7 @@
                                     </button>
                                 </form>
                             @empty
-                                <p class="px-4 py-8 text-center text-sm text-slate-500">Belum ada notifikasi.</p>
+                                <p class="px-4 py-8 text-center text-sm text-slate-500">{{ __('Belum ada notifikasi.') }}</p>
                             @endforelse
                         </div>
                     </div>
@@ -143,15 +148,15 @@
                         <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-sm font-bold text-white">{{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}</span>
                         <span class="hidden min-w-0 text-left sm:block">
                             <span class="block max-w-36 truncate text-sm font-semibold text-slate-800">{{ auth()->user()->nama }}</span>
-                            <span class="block text-xs text-slate-500">{{ ucfirst(auth()->user()->role) }}</span>
+                            <span class="block text-xs text-slate-500">{{ auth()->user()->role === 'admin' ? __('Administrator') : __('Pengguna') }}</span>
                         </span>
                         <svg class="hidden h-4 w-4 text-slate-400 sm:block" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 7.22a.75.75 0 011.06 0L10 10.94l3.72-3.72a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.22 8.28a.75.75 0 010-1.06z" clip-rule="evenodd" /></svg>
                     </summary>
                     <div class="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl">
-                        <a href="{{ route('profile.edit') }}" class="block rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-indigo-700">Profil dan keamanan</a>
+                        <a href="{{ route('profile.edit') }}" class="block rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-indigo-700">{{ __('Profil dan keamanan') }}</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="w-full rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-rose-600 transition hover:bg-rose-50">Keluar dari akun</button>
+                            <button type="submit" class="w-full rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-rose-600 transition hover:bg-rose-50">{{ __('Keluar dari akun') }}</button>
                         </form>
                     </div>
                 </details>
